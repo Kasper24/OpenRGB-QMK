@@ -37,6 +37,22 @@ build_linux:
     expire_in: 1337 years
 
 #-----------------------------------------------------------------------#
+# Linux (AppImage) 32-bit Build Target                                  #
+#-----------------------------------------------------------------------#
+build_linux:
+  image: ubuntu:bionic
+  stage: build
+  script:
+  - apt update
+  - apt install -y build-essential qtcreator qt5-default libusb-1.0-0-dev libhidapi-dev pkgconf wget git
+  - ./scripts/build-appimage-32.sh
+  
+  artifacts:
+    paths:
+    - OpenRGB-i386.AppImage
+    expire_in: 1337 years
+  
+#-----------------------------------------------------------------------#
 # Windows (32-bit) Build Target                                         #
 #-----------------------------------------------------------------------#
 build_windows_32:
