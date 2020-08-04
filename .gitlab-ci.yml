@@ -24,7 +24,7 @@ before_script:
 # Linux (AppImage) Build Target                                         #
 #-----------------------------------------------------------------------#
 build_linux:
-  image: ubuntu:bionic
+  image: i386/ubuntu:bionic
   stage: build
   script:
   - apt update
