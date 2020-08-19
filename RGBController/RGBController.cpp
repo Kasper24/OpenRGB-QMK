@@ -1,5 +1,6 @@
 #include "RGBController.h"
 #include <cstring>
+#include <algorithm> // std::min
 
 using namespace std::chrono_literals;
 
@@ -1466,7 +1467,7 @@ void RGBController::RearrangeLedPositions()
             }
             else
             {
-#warning this might be an issue with resizable zones - I don`t know how to handle them!
+// WARNING: this might become an issue with resizable zones - I don`t know how to handle them!
                 for(int i = 0; i < zones[zone_idx].leds_count; ++i)
                 {
                     zones[zone_idx].leds[i].matrix_x = zones[zone_idx].matrix_x + (i % maxCols + ledPadding) * atom;
