@@ -194,7 +194,6 @@ void DeviceView::paintEvent(QPaintEvent * /* event */)
         {
             painter.setPen(palette().windowText().color());
         }
-        //painter.drawText(rect, Qt::AlignVCenter | Qt::AlignHCenter, );
         painter.drawText(posx, posy + posh, QString(controller->zones[zone_idx].name.c_str()));
     }
 
@@ -214,7 +213,8 @@ void DeviceView::paintEvent(QPaintEvent * /* event */)
 void DeviceView::updateSelection()
 {
     selectedLeds.clear();
-    selectionFlags.resize(controller->leds.size()); // Could this change?
+    selectionFlags.clear();
+    selectionFlags.resize(controller->leds.size());
     QRect sel = selectionRect.normalized();
     std::vector<led>& leds = controller->leds;
 
@@ -229,12 +229,15 @@ void DeviceView::updateSelection()
         selectionFlags[led_idx] = 0;
         if(sel.intersects(rect))
         {
-            selectedLeds.push_back(led_idx);
             selectionFlags[led_idx] = 1;
         }
         if(ctrlDown)
         {
             selectionFlags[led_idx] ^= previousFlags[led_idx];
+            if(selectionFlags[led_idx])
+            {
+                selectedLeds.push_back(led_idx);
+            }
         }
     }
     emit selectionChanged(selectedLeds);
