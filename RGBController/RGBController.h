@@ -89,7 +89,12 @@ typedef struct
 typedef struct
 {
     std::string         name;   /* LED name                     */
+	std::string	        label;  /* Label displayed on top of LED, usually the key name */
     unsigned int        value;  /* Device-specific LED value    */
+    float               matrix_x; /* LED position in deviceView */
+    float               matrix_y;
+    float               matrix_w;
+    float               matrix_h;
 } led;
 
 typedef int zone_type;
@@ -138,6 +143,10 @@ typedef struct
     unsigned int            leds_min;       /* Minimum number of LEDs   */
     unsigned int            leds_max;       /* Maximum number of LEDs   */
     matrix_map_type *       matrix_map;     /* Matrix map pointer       */
+    float                   matrix_x;       /* Zone name position in deviceView */
+    float                   matrix_y;
+    float                   matrix_w;       /* Total zone width         */
+    float                   matrix_h;       /* Relative height of the zone name */
 } zone;
 
 typedef void (*RGBControllerCallback)(void *);
@@ -156,6 +165,8 @@ public:
     std::vector<RGBColor>   colors;         /* Color buffer             */
     device_type             type;           /* device type              */
     int                     active_mode = 0;/* active mode              */
+
+    float                   matrix_h; // Only used for deviceView to avoid unnecessary calculations: a literal aspect ratio of the device preview
 
     /*---------------------------------------------------------*\
     | RGBController base class constructor                      |
@@ -202,6 +213,8 @@ public:
 
     void                    DeviceCallThreadFunction();
 
+    void                    RearrangeLedPositions();
+
     /*---------------------------------------------------------*\
     | Functions to be implemented in device implementation      |
     \*---------------------------------------------------------*/
@@ -229,4 +242,5 @@ private:
     std::mutex                          UpdateMutex;
     std::vector<RGBControllerCallback>  UpdateCallbacks;
     std::vector<void *>                 UpdateCallbackArgs;
+    bool                                LedPositionsSet = false; // Set to true in constructor if your implementation provides LED positions for the view
 };

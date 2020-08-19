@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>875</width>
-    <height>374</height>
+    <height>377</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -275,7 +275,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="11">
-    <widget class="DeviceView" name="widget" native="true">
+    <widget class="DeviceView" name="DevicePreview" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
