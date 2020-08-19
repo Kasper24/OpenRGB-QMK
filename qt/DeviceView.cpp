@@ -339,4 +339,5 @@ void DeviceView::setSelectionColor(RGBColor color)
             controller->SetLED(led_idx, color);
         }
     }
+    controller->UpdateLEDs();
 }

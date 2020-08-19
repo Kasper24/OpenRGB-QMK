@@ -125,12 +125,12 @@ void Ui::OpenRGBDevicePage::on_ZoneBox_currentIndexChanged(int /*index*/)
                         {
                             ui->LEDBox->addItem("Entire device");
                             ui->LEDBox->setEnabled(1);
-                            ui->SetLEDButton->setEnabled(1);
+                            //ui->SetLEDButton->setEnabled(1);
                         }
                         else
                         {
                             ui->LEDBox->setDisabled(1);
-                            ui->SetLEDButton->setDisabled(1);
+                            //ui->SetLEDButton->setDisabled(1);
                         }
                         for (std::size_t i = 0; i < device->leds.size(); i++)
                         {
@@ -157,12 +157,12 @@ void Ui::OpenRGBDevicePage::on_ZoneBox_currentIndexChanged(int /*index*/)
                     {
                         ui->LEDBox->addItem("Entire zone");
                         ui->LEDBox->setEnabled(1);
-                        ui->SetLEDButton->setEnabled(1);
+                        //ui->SetLEDButton->setEnabled(1);
                     }
                     else
                     {
                         ui->LEDBox->setDisabled(1);
-                        ui->SetLEDButton->setDisabled(1);
+                        //ui->SetLEDButton->setDisabled(1);
                     }
                     for (std::size_t led_idx = 0; led_idx < device->zones[selected_zone].leds_count; led_idx++)
                     {
@@ -578,12 +578,12 @@ void Ui::OpenRGBDevicePage::UpdateModeUi()
                 {
                     ui->ZoneBox->setEnabled(1);
                     ui->ZoneBox->addItem("All Zones");
-                    ui->SetZoneButton->setEnabled(1);
+                    //ui->SetZoneButton->setEnabled(1);
                 }
                 else
                 {
                     ui->ZoneBox->setDisabled(1);
-                    ui->SetZoneButton->setDisabled(1);
+                    //ui->SetZoneButton->setDisabled(1);
                 }
 
                 for (std::size_t i = 0; i < device->zones.size(); i++)
@@ -761,8 +761,9 @@ void Ui::OpenRGBDevicePage::SetDevice(unsigned char red, unsigned char green, un
     UpdatingColor = false;
     updateHSV();
     updateWheel();
-    
-    on_SetDeviceButton_clicked();
+    updatePreview();
+
+    //on_SetDeviceButton_clicked();
 }
 
 void Ui::OpenRGBDevicePage::UpdateDevice()
@@ -843,213 +844,76 @@ void Ui::OpenRGBDevicePage::SetCustomMode(unsigned char red, unsigned char green
     UpdateMode();
 }
 
-void Ui::OpenRGBDevicePage::on_SetDeviceButton_clicked()
-{
-    /*-----------------------------------------------------*\
-    | Read selected mode                                    |
-    \*-----------------------------------------------------*/
-    unsigned int selected_mode   = (unsigned int)ui->ModeBox->currentIndex();
-
-    switch(device->modes[selected_mode].color_mode)
-    {
-        case MODE_COLORS_PER_LED:
-            {
-                /*-----------------------------------------------------*\
-                | Set all device LEDs to the current color              |
-                \*-----------------------------------------------------*/
-                RGBColor color = ToRGBColor(
-                    ui->RedSpinBox->text().toInt(),
-                    ui->GreenSpinBox->text().toInt(),
-                    ui->BlueSpinBox->text().toInt()
-                );
-
-                device->SetAllLEDs(color);
-
-                device->UpdateLEDs();
-            }
-            break;
-
-        case MODE_COLORS_MODE_SPECIFIC:
-            {
-                /*-----------------------------------------------------*\
-                | Set all device LEDs to the current color              |
-                \*-----------------------------------------------------*/
-                RGBColor color = ToRGBColor(
-                    ui->RedSpinBox->text().toInt(),
-                    ui->GreenSpinBox->text().toInt(),
-                    ui->BlueSpinBox->text().toInt()
-                );
-
-                for(std::size_t i = 0; i < device->modes[selected_mode].colors.size(); i++)
-                {
-                    device->modes[selected_mode].colors[i] = color;
-                }
-
-                device->UpdateMode();
-            }
-            break;
-    }
-}
-
-void Ui::OpenRGBDevicePage::on_SetZoneButton_clicked()
-{
-    /*-----------------------------------------------------*\
-    | Read selected mode                                    |
-    \*-----------------------------------------------------*/
-    unsigned int selected_mode   = (unsigned int)ui->ModeBox->currentIndex();
-
-    switch(device->modes[selected_mode].color_mode)
-    {
-        case MODE_COLORS_PER_LED:
-            {
-                unsigned int index = ui->ZoneBox->currentIndex();
-
-                if(index == 0)
-                {
-                    on_SetDeviceButton_clicked();
-                }
-                else
-                {
-                    index = index - 1;
-
-                    /*-----------------------------------------------------*\
-                    | Set all LEDs in the selected zone to the current color|
-                    \*-----------------------------------------------------*/
-                    RGBColor color = ToRGBColor(
-                        ui->RedSpinBox->text().toInt(),
-                        ui->GreenSpinBox->text().toInt(),
-                        ui->BlueSpinBox->text().toInt()
-                    );
-
-                    device->SetAllZoneLEDs(index, color);
-                    device->UpdateZoneLEDs(index);
-                }
-            }
-            break;
-    }
-}
-
-void Ui::OpenRGBDevicePage::on_SetLEDButton_clicked()
-{
-    /*-----------------------------------------------------*\
-    | Read selected mode                                    |
-    \*-----------------------------------------------------*/
-    unsigned int selected_mode   = (unsigned int)ui->ModeBox->currentIndex();
-    unsigned int index = ui->LEDBox->currentIndex();
-
-    switch(device->modes[selected_mode].color_mode)
-    {
-        case MODE_COLORS_PER_LED:
-            {
-                unsigned int selected_zone = ui->ZoneBox->currentIndex();
-
-                /*-----------------------------------------------------*\
-                | Set the selected LED to the current color             |
-                \*-----------------------------------------------------*/
-                RGBColor color = ToRGBColor(
-                    ui->RedSpinBox->text().toInt(),
-                    ui->GreenSpinBox->text().toInt(),
-                    ui->BlueSpinBox->text().toInt()
-                );
-
-                if(selected_zone == 0)
-                {
-                    device->SetLED(index, color);
-                    device->UpdateSingleLED(index);
-                }
-                else
-                {
-                    selected_zone = selected_zone - 1;
-
-                    device->SetLED(device->zones[selected_zone].start_idx + index, color);
-                    device->UpdateSingleLED(device->zones[selected_zone].start_idx + index);
-                }
-            }
-            break;
-
-        case MODE_COLORS_MODE_SPECIFIC:
-            {
-                /*-----------------------------------------------------*\
-                | Set all device LEDs to the current color              |
-                \*-----------------------------------------------------*/
-                RGBColor color = ToRGBColor(
-                    ui->RedSpinBox->text().toInt(),
-                    ui->GreenSpinBox->text().toInt(),
-                    ui->BlueSpinBox->text().toInt()
-                );
-
-                device->modes[selected_mode].colors[index] = color;
-
-                device->UpdateMode();
-            }
-            break;
-    }
-}
-
 void Ui::OpenRGBDevicePage::on_ButtonRed_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(255);
     ui->GreenSpinBox->setValue(0);
     ui->BlueSpinBox->setValue(0);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(255, 0, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonYellow_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(255);
     ui->GreenSpinBox->setValue(255);
     ui->BlueSpinBox->setValue(0);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(255, 255, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonGreen_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(0);
     ui->GreenSpinBox->setValue(255);
     ui->BlueSpinBox->setValue(0);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(0, 255, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonCyan_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(0);
     ui->GreenSpinBox->setValue(255);
     ui->BlueSpinBox->setValue(255);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(0, 255, 255);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonBlue_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(0);
     ui->GreenSpinBox->setValue(0);
     ui->BlueSpinBox->setValue(255);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(0, 0, 255);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonMagenta_clicked()
 {
-    UpdatingColor = true;
+    /*UpdatingColor = true;
     ui->RedSpinBox->setValue(255);
     ui->GreenSpinBox->setValue(0);
     ui->BlueSpinBox->setValue(255);
     UpdatingColor = false;
     updateHSV();
-    updateWheel();
+    updateWheel();*/
+    SetDevice(255, 0, 255);
 }
 
 void Ui::OpenRGBDevicePage::on_ColorWheelBox_colorChanged(const QColor color)
@@ -1066,6 +930,7 @@ void Ui::OpenRGBDevicePage::on_ColorWheelBox_colorChanged(const QColor color)
     UpdatingColor = false;
 
     updateHSV();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::updateRGB()
@@ -1133,40 +998,56 @@ void Ui::OpenRGBDevicePage::updateWheel()
     UpdatingColor = false;
 }
 
+void Ui::OpenRGBDevicePage::updatePreview()
+{
+    RGBColor qrgb = ToRGBColor
+                        (
+                        ui->RedSpinBox->value(),
+                        ui->GreenSpinBox->value(),
+                        ui->BlueSpinBox->value());
+    ui->DevicePreview->setSelectionColor(qrgb);
+}
+
 void Ui::OpenRGBDevicePage::on_RedSpinBox_valueChanged(int /*arg1*/)
 {
     updateHSV();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_HueSpinBox_valueChanged(int /*arg1*/)
 {
     updateRGB();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_GreenSpinBox_valueChanged(int /*arg1*/)
 {
     updateHSV();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_SatSpinBox_valueChanged(int /*arg1*/)
 {
     updateRGB();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_BlueSpinBox_valueChanged(int /*arg1*/)
 {
     updateHSV();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_ValSpinBox_valueChanged(int /*arg1*/)
 {
     updateRGB();
     updateWheel();
+    updatePreview();
 }
 
 void Ui::OpenRGBDevicePage::on_DevicePreview_selectionChanged(QVector<int> indices)

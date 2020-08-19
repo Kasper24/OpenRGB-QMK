@@ -18,7 +18,7 @@ public:
     explicit OpenRGBDevicePage(RGBController *dev, QWidget *parent = nullptr);
     ~OpenRGBDevicePage();
 
-    void SetDevice(unsigned char red, unsigned char green, unsigned char blue);
+    void SetDevice(unsigned char red, unsigned char green, unsigned char blue); // Could be moved to private
     void SetCustomMode(unsigned char red, unsigned char green, unsigned char blue);
     void UpdateDevice();
     void UpdateMode();
@@ -47,9 +47,9 @@ private slots:
     void on_ButtonCyan_clicked();
     void on_ButtonBlue_clicked();
     void on_ButtonMagenta_clicked();
-    void on_SetDeviceButton_clicked();
-    void on_SetZoneButton_clicked();
-    void on_SetLEDButton_clicked();
+    //void on_SetDeviceButton_clicked(); // Unused
+    //void on_SetZoneButton_clicked(); // Unused
+    //void on_SetLEDButton_clicked(); // Unused
     void on_SetAllButton_clicked();
     void on_RandomCheck_clicked();
     void on_PerLEDCheck_clicked();
@@ -64,10 +64,9 @@ private:
     bool InvertedSpeed = false;
 
     void updateRGB();
-
     void updateHSV();
-
     void updateWheel();
+    void updatePreview();
 
 signals:
     void SetAllDevices(unsigned char red, unsigned char green, unsigned char blue);
