@@ -120,7 +120,7 @@ void DeviceView::mouseReleaseEvent(QMouseEvent* event)
     update();
 }
 
-void DeviceView::resizeEvent(QResizeEvent *event)
+void DeviceView::resizeEvent(QResizeEvent* /*event*/)
 {
     size = width();
     offset_x = 0;
@@ -132,7 +132,7 @@ void DeviceView::resizeEvent(QResizeEvent *event)
     update();
 }
 
-void DeviceView::paintEvent(QPaintEvent * /* event */)
+void DeviceView::paintEvent(QPaintEvent* /* event */)
 {
     QPainter painter(this);
     QFont font = painter.font();
@@ -167,11 +167,11 @@ void DeviceView::paintEvent(QPaintEvent * /* event */)
         // Set the font color so that the text is visible
         if(currentColor.value() > 127)
         {
-            painter.setBrush(Qt::black);
+            painter.setPen(Qt::black);
         }
         else
         {
-            painter.setBrush(Qt::white);
+            painter.setPen(Qt::white);
         }
         painter.drawText(rect, Qt::AlignVCenter | Qt::AlignHCenter, QString(controller->leds[led_idx].label.c_str()));
     }
@@ -218,7 +218,7 @@ void DeviceView::updateSelection()
     QRect sel = selectionRect.normalized();
     std::vector<led>& leds = controller->leds;
 
-    for(int led_idx = 0; led_idx < leds.size(); ++led_idx)
+    for(size_t led_idx = 0; led_idx < leds.size(); ++led_idx)
     {
         // Check intersection
         int posx = controller->leds[led_idx].matrix_x * size + offset_x;
@@ -245,7 +245,7 @@ void DeviceView::updateSelection()
 
 bool DeviceView::selectLed(int target)
 {
-    if(target < 0 || target >= controller->leds.size())
+    if(target < 0 || size_t(target) >= controller->leds.size())
     {
         return false;
     }
@@ -262,7 +262,7 @@ bool DeviceView::selectLeds(QVector<int> target)
 {
     for(int item: target)
     {
-        if(item < 0 || item >= controller->leds.size())
+        if(item < 0 || size_t(item) >= controller->leds.size())
         {
             return false;
         }
@@ -289,7 +289,7 @@ bool DeviceView::selectLeds(QVector<int> target)
 
 bool DeviceView::selectZone(int zone, bool add)
 {
-    if(zone < 0 || zone >= controller->zones.size())
+    if(zone < 0 || size_t(zone) >= controller->zones.size())
     {
         return false;
     }
@@ -300,7 +300,7 @@ bool DeviceView::selectZone(int zone, bool add)
         selectionFlags.resize(controller->leds.size());
     }
     int zoneStart = controller->zones[zone].leds - &(controller->leds[0]); // Index of the first LED in the zone
-    for(int led_idx = 0; led_idx < controller->zones[zone].leds_count; ++led_idx)
+    for(size_t led_idx = 0; led_idx < controller->zones[zone].leds_count; ++led_idx)
     {
         if(!selectionFlags[zoneStart + led_idx])
         {

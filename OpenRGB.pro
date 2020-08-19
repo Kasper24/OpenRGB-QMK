@@ -34,7 +34,8 @@ DEFINES +=                                                              \
     BUILDDATE_STRING=\\"\"\"$$BUILDDATE\\"\"\"                          \
     GIT_COMMIT_ID=\\"\"\"$$GIT_COMMIT_ID\\"\"\"                         \
     GIT_COMMIT_DATE=\\"\"\"$$GIT_COMMIT_DATE\\"\"\"                     \
-    GIT_BRANCH=\\"\"\"$$GIT_BRANCH\\"\"\"
+    GIT_BRANCH=\\"\"\"$$GIT_BRANCH\\"\"\"                               \
+    ADD_DEBUG_KBD=1
 
 #-----------------------------------------------------------------------#
 # OpenRGB Common                                                        #

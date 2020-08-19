@@ -105,6 +105,13 @@ void DetectHyperXKeyboardControllers(std::vector<RGBController*>& rgb_controller
             info = info->next;
         }
     }
+
+#ifdef ADD_DEBUG_KBD
+    RGBController_HyperXKeyboard* rgb_controller = new RGBController_HyperXKeyboard(nullptr);
+    rgb_controller->name = "Debug Keyboard";
+    rgb_controllers.push_back(rgb_controller);
+#endif
+
 }   /* DetectHyperXKeyboardControllers() */
 
 REGISTER_DETECTOR("HyperX Keyboard", DetectHyperXKeyboardControllers);

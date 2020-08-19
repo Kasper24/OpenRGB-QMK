@@ -199,6 +199,139 @@ static const char *led_names[] =
     "Key: Media Mute"
 };
 
+
+static const char *led_labels[] =
+{
+    "ESC",
+    "`",
+    "\u2b7e", // Tab
+    "Caps Lock",
+    "\u21e7", // Left Shift
+    "CTRL", // Left Ctrl
+    "F12",
+    "=",
+    "F9",
+    "9",
+    "O",
+    "L",
+    ",",
+    "\u2630", // Context/Menu
+    "\u21b5", // Enter (ISO)
+    "\u2190", // Left arrow
+    "F1",
+    "1",
+    "Q",
+    "A",
+    "\\",
+    "\u2756", // Left Meta
+    "PrtSc",
+    "F10",
+    "0",
+    "P",
+    ";",
+    ".",
+    "\u21b5", // Enter
+    "\u2193", // Down arrow
+    "F2",
+    "2",
+    "W",
+    "S",
+    "Z",
+    "ALT",
+    "Scroll Lock",
+    "\u232b", // Backspace; options: \u232b or \u27f5
+    "F11",
+    "-",
+    "[",
+    "'",
+    "/",
+    "\u2192", // Right arrow
+    "F3",
+    "3",
+    "E",
+    "D",
+    "X",
+    "Pause\nBreak", // Pause/Break
+    "Delete",
+    "7", // Numpad 7
+    "Num Lock",
+    "6", // Numpad 6
+    "F4",
+    "4",
+    "R",
+    "F",
+    "C",
+    "", // Space key is empty, right?
+    "Insert",
+    "End",
+    "8", // Numpad 8
+    "/", // Numpad /
+    "1", // Numpad 1
+    "F5",
+    "5",
+    "T",
+    "G",
+    "V",
+    "Home",
+    "PgDn",
+    "9", // Numpad 9
+    "*", // Numpad *
+    "2", // Numpad 2
+    "F6",
+    "6",
+    "Y",
+    "H",
+    "B",
+    "PgUp",
+    "\u21e7", // Right shift
+    "-", // Numpad -
+    "3", // Numpad 3
+    "F7",
+    "7",
+    "U",
+    "J",
+    "N",
+    "ALT", // Right Alt
+    "]",
+    "CTRL", // Right Ctrl
+    "4", // Numpad 4
+    "+", // Numpad +
+    "0", // Numpad 0
+    "F8",
+    "8",
+    "I",
+    "K",
+    "M",
+    "\u2756", // Right Meta
+    "\\", // ANSI
+    "\u2191", // Up arrow
+    "5", // Numpad 5
+    "\u21b5\n\u1f5a9", // Numpad enter with a calculator sign
+    ".\nDel",
+    "", // RGB Strip 1
+    "", // RGB Strip 2
+    "", // RGB Strip 3
+    "", // RGB Strip 4
+    "", // RGB Strip 5
+    "", // RGB Strip 6
+    "", // RGB Strip 7
+    "", // RGB Strip 8
+    "", // RGB Strip 9
+    "", // RGB Strip 10
+    "", // RGB Strip 11
+    "", // RGB Strip 12
+    "", // RGB Strip 13
+    "", // RGB Strip 14
+    "", // RGB Strip 15
+    "", // RGB Strip 16
+    "", // RGB Strip 17
+    "", // RGB Strip 18
+    "\u23ee", // Previous
+    "\u23ef", // Play/Pause
+    "\u23ed", // Next
+    "\u1f507" // Mute
+};
+
 RGBController_HyperXKeyboard::RGBController_HyperXKeyboard(HyperXKeyboardController* hyperx_ptr)
 {
     hyperx = hyperx_ptr;
@@ -302,6 +435,7 @@ void RGBController_HyperXKeyboard::SetupZones()
     {
         led new_led;
         new_led.name = led_names[led_idx];
+        new_led.label = led_labels[led_idx];
         leds.push_back(new_led);
     }
 
@@ -319,13 +453,16 @@ void RGBController_HyperXKeyboard::DeviceUpdateLEDs()
 {
     last_update_time = std::chrono::steady_clock::now();
 
-    if(active_mode == 0)
+    if(hyperx)
     {
-        hyperx->SetLEDsDirect(colors);
-    }
-    else
-    {
-        hyperx->SetLEDs(colors);
+        if(active_mode == 0)
+        {
+            hyperx->SetLEDsDirect(colors);
+        }
+        else
+        {
+            hyperx->SetLEDs(colors);
+        }
     }
 }
 

@@ -1403,8 +1403,12 @@ void RGBController::RearrangeLedPositions()
 {
     if(!LedPositionsSet)
     {
-        unsigned int maxWidth = 0, totalHeight = 0;
+        unsigned int maxWidth = 0;
+        float totalHeight = 0;
         unsigned int maxCols = 20;
+        float zonePadding = 1; // Amount of space between zones
+        float ledPadding = 0.1;
+
         for(std::size_t zone_idx = 0; zone_idx < zones.size(); zone_idx++)
         {
             if((zones[zone_idx].type == ZONE_TYPE_MATRIX) && (zones[zone_idx].matrix_map))
@@ -1424,7 +1428,7 @@ void RGBController::RearrangeLedPositions()
             }
         }
 
-        totalHeight += zones.size(); // Add some space for zone names & padding;
+        totalHeight += zones.size() * zonePadding; // Add some space for zone names & padding;
 
         float current_y = 0; // We will be descending, placing each zone one atom below the previous one
         float atom = 1.0 / maxWidth; // Atom is the width of a single square; if the whole thing becomes too tall, we ignore it and let the view widget take care of it
@@ -1436,7 +1440,7 @@ void RGBController::RearrangeLedPositions()
             zones[zone_idx].matrix_y = current_y + 0.5 * atom;
             zones[zone_idx].matrix_w *= atom;
             zones[zone_idx].matrix_h = 0.4 * atom;
-            current_y += atom;
+            current_y += zonePadding * atom;
 
             // And now, for the LEDs
             if((zones[zone_idx].type == ZONE_TYPE_MATRIX) && (zones[zone_idx].matrix_map))
@@ -1450,27 +1454,30 @@ void RGBController::RearrangeLedPositions()
                         unsigned int color_idx = map->map[map_idx];
                         if(color_idx != 0xFFFFFFFF)
                         {
-                            leds[color_idx].matrix_x = (zones[zone_idx].matrix_x + led_x + 0.1) * atom;
-                            leds[color_idx].matrix_y = (current_y + led_y + 0.1) * atom;
-                            leds[color_idx].matrix_w = 0.8 * atom;
-                            leds[color_idx].matrix_h = 0.8 * atom;
+                            leds[color_idx].matrix_x = (zones[zone_idx].matrix_x + led_x + ledPadding) * atom;
+                            leds[color_idx].matrix_y = current_y + (led_y + ledPadding) * atom;
+                            leds[color_idx].matrix_w = (1 - 2 * ledPadding) * atom;
+                            leds[color_idx].matrix_h = (1 - 2 * ledPadding) * atom;
                         }
                     }
                 }
+                current_y += map->height * atom;
             }
             else
             {
 #warning this might be an issue with resizable zones - I don't know how to handle them!
                 for(int i = 0; i < zones[zone_idx].leds_count; ++i)
                 {
-                    zones[zone_idx].leds[i].matrix_x = zones[zone_idx].matrix_x + (i % maxCols + 0.1) * atom;
-                    zones[zone_idx].leds[i].matrix_y = current_y + (i / maxCols + 0.1) * atom;
-                    zones[zone_idx].leds[i].matrix_w = 0.8 * atom;
-                    zones[zone_idx].leds[i].matrix_h = 0.8 * atom;
+                    zones[zone_idx].leds[i].matrix_x = zones[zone_idx].matrix_x + (i % maxCols + ledPadding) * atom;
+                    zones[zone_idx].leds[i].matrix_y = current_y + (i / maxCols + ledPadding) * atom;
+                    zones[zone_idx].leds[i].matrix_w = (1 - 2 * ledPadding) * atom;
+                    zones[zone_idx].leds[i].matrix_h = (1 - 2 * ledPadding) * atom;
                 }
+                current_y += (zones[zone_idx].leds_count / maxCols + !!(zones[zone_idx].leds_count % maxCols)) * atom;
             }
         }
     }
+    // current_y and matrix_h must be equal at this point
 }
 
 std::string device_type_to_str(device_type type)

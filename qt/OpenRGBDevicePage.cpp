@@ -204,7 +204,7 @@ void Ui::OpenRGBDevicePage::on_LEDBox_currentIndexChanged(int index)
     {
         case MODE_COLORS_PER_LED:
             {
-                unsigned int selected_zone = ui->ZoneBox->currentIndex();
+                int selected_zone = ui->ZoneBox->currentIndex();
 
                 RGBColor color = 0x00000000;
                 bool updateColor = 0;
@@ -846,73 +846,31 @@ void Ui::OpenRGBDevicePage::SetCustomMode(unsigned char red, unsigned char green
 
 void Ui::OpenRGBDevicePage::on_ButtonRed_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(255);
-    ui->GreenSpinBox->setValue(0);
-    ui->BlueSpinBox->setValue(0);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(255, 0, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonYellow_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(255);
-    ui->GreenSpinBox->setValue(255);
-    ui->BlueSpinBox->setValue(0);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(255, 255, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonGreen_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(0);
-    ui->GreenSpinBox->setValue(255);
-    ui->BlueSpinBox->setValue(0);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(0, 255, 0);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonCyan_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(0);
-    ui->GreenSpinBox->setValue(255);
-    ui->BlueSpinBox->setValue(255);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(0, 255, 255);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonBlue_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(0);
-    ui->GreenSpinBox->setValue(0);
-    ui->BlueSpinBox->setValue(255);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(0, 0, 255);
 }
 
 void Ui::OpenRGBDevicePage::on_ButtonMagenta_clicked()
 {
-    /*UpdatingColor = true;
-    ui->RedSpinBox->setValue(255);
-    ui->GreenSpinBox->setValue(0);
-    ui->BlueSpinBox->setValue(255);
-    UpdatingColor = false;
-    updateHSV();
-    updateWheel();*/
     SetDevice(255, 0, 255);
 }
 
