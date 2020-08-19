@@ -199,7 +199,7 @@ void HyperXKeyboardController::SetLEDs(std::vector<RGBColor> colors)
         );
 
     std::this_thread::sleep_for(5ms);
-    
+
     SendExtendedColor
         (
         0x01,

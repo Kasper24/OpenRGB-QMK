@@ -306,7 +306,7 @@ static const char *led_labels[] =
     "\\", // ANSI
     "\u2191", // Up arrow
     "5", // Numpad 5
-    "\u21b5\n\u1f5a9", // Numpad enter with a calculator sign
+    "\u21b5\n\U0001f5a9", // Numpad enter with a calculator sign
     ".\nDel",
     "", // RGB Strip 1
     "", // RGB Strip 2
@@ -329,7 +329,7 @@ static const char *led_labels[] =
     "\u23ee", // Previous
     "\u23ef", // Play/Pause
     "\u23ed", // Next
-    "\u1f507" // Mute
+    "\U0001f507" // Mute
 };
 
 RGBController_HyperXKeyboard::RGBController_HyperXKeyboard(HyperXKeyboardController* hyperx_ptr)

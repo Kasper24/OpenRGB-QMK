@@ -1353,6 +1353,7 @@ void RGBController::SignalUpdate()
 
     UpdateMutex.unlock();
 }
+
 void RGBController::UpdateLEDs()
 {
     CallFlag_UpdateLEDs = true;
@@ -1465,7 +1466,7 @@ void RGBController::RearrangeLedPositions()
             }
             else
             {
-#warning this might be an issue with resizable zones - I don't know how to handle them!
+#warning this might be an issue with resizable zones - I don`t know how to handle them!
                 for(int i = 0; i < zones[zone_idx].leds_count; ++i)
                 {
                     zones[zone_idx].leds[i].matrix_x = zones[zone_idx].matrix_x + (i % maxCols + ledPadding) * atom;

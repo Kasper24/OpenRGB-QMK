@@ -62,6 +62,7 @@ private:
 
     bool UpdatingColor = false;
     bool InvertedSpeed = false;
+    bool MultipleSelected = false;
 
     void updateRGB();
     void updateHSV();

@@ -178,7 +178,9 @@ void DeviceView::paintEvent(QPaintEvent* /* event */)
 
     font.setPixelSize(12);
     painter.setFont(font);
-    // Zone names
+    /*----------*\
+    | Zone names |
+    \*----------*/
     for(size_t zone_idx = 0; zone_idx < controller->zones.size(); ++zone_idx)
     {
         int posx = controller->zones[zone_idx].matrix_x * size + offset_x;
@@ -186,7 +188,7 @@ void DeviceView::paintEvent(QPaintEvent* /* event */)
         int posw = controller->zones[zone_idx].matrix_w * size;
         int posh = controller->zones[zone_idx].matrix_h * size;
         QRect rect = {posx, posy, posw, posh};
-        if(rect.contains(lastMousePos))
+        if(rect.contains(lastMousePos) && (!mouseDown || !mouseMoved))
         {
             painter.setPen(palette().highlight().color());
         }
@@ -197,7 +199,9 @@ void DeviceView::paintEvent(QPaintEvent* /* event */)
         painter.drawText(posx, posy + posh, QString(controller->zones[zone_idx].name.c_str()));
     }
 
-    // Selection area
+    /*--------------*\
+    | Selection area |
+    \*--------------*/
     if(mouseDown)
     {
         QRect rect = selectionRect.normalized();
@@ -234,12 +238,13 @@ void DeviceView::updateSelection()
         if(ctrlDown)
         {
             selectionFlags[led_idx] ^= previousFlags[led_idx];
-            if(selectionFlags[led_idx])
-            {
-                selectedLeds.push_back(led_idx);
-            }
+        }
+        if(selectionFlags[led_idx])
+        {
+            selectedLeds.push_back(led_idx);
         }
     }
+    update();
     emit selectionChanged(selectedLeds);
 }
 
@@ -254,6 +259,7 @@ bool DeviceView::selectLed(int target)
     selectionFlags.clear();
     selectionFlags.resize(controller->leds.size());
     selectionFlags[target] = 1;
+    update();
     emit selectionChanged(selectedLeds);
     return true;
 }
@@ -283,6 +289,7 @@ bool DeviceView::selectLeds(QVector<int> target)
             selectedLeds.push_back(i);
         }
     }
+    update();
     emit selectionChanged(selectedLeds);
     return true;
 }
@@ -308,6 +315,7 @@ bool DeviceView::selectZone(int zone, bool add)
             selectionFlags[zoneStart + led_idx] = 1;
         }
     }
+    update();
     emit selectionChanged(selectedLeds);
     return true;
 }
