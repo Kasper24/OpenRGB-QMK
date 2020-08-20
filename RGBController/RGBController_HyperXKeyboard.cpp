@@ -502,7 +502,7 @@ void RGBController_HyperXKeyboard::KeepaliveThread()
         {
             if((std::chrono::steady_clock::now() - last_update_time) > std::chrono::milliseconds(50))
             {
-                UpdateLEDs();
+                CallFlag_UpdateLEDs = true;
             }
         }
         std::this_thread::sleep_for(10ms);;

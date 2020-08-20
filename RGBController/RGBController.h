@@ -233,8 +233,6 @@ public:
 
 private:
     std::thread*            DeviceCallThread;
-    std::atomic<bool>       CallFlag_UpdateLEDs;
-    std::atomic<bool>       CallFlag_UpdateMode;
     std::atomic<bool>       DeviceThreadRunning;
     //bool                    CallFlag_UpdateZoneLEDs                     = false;
     //bool                    CallFlag_UpdateSingleLED                    = false;
@@ -244,4 +242,8 @@ private:
     std::vector<RGBControllerCallback>  UpdateCallbacks;
     std::vector<void *>                 UpdateCallbackArgs;
     bool                                LedPositionsSet = false; // Set to true in constructor if your implementation provides LED positions for the view
+
+protected:
+    std::atomic<bool>       CallFlag_UpdateLEDs;
+    std::atomic<bool>       CallFlag_UpdateMode;
 };
