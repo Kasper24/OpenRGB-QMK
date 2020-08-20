@@ -202,12 +202,12 @@ static const char *led_names[] =
 
 static const char *led_labels[] =
 {
-    "ESC",
+    "Esc",
     "`",
     "\u2b7e", // Tab
-    "Caps Lock",
+    "Cap",
     "\u21e7", // Left Shift
-    "CTRL", // Left Ctrl
+    "Ctl", // Left Ctrl
     "F12",
     "=",
     "F9",
@@ -224,7 +224,7 @@ static const char *led_labels[] =
     "A",
     "\\",
     "\u2756", // Left Meta
-    "PrtSc",
+    "PRT",
     "F10",
     "0",
     "P",
@@ -237,8 +237,8 @@ static const char *led_labels[] =
     "W",
     "S",
     "Z",
-    "ALT",
-    "Scroll Lock",
+    "Alt",
+    "Scr",
     "\u232b", // Backspace; options: \u232b or \u27f5
     "F11",
     "-",
@@ -252,9 +252,9 @@ static const char *led_labels[] =
     "D",
     "X",
     "Pause\nBreak", // Pause/Break
-    "Delete",
+    "Del",
     "7", // Numpad 7
-    "Num Lock",
+    "Num",
     "6", // Numpad 6
     "F4",
     "4",
@@ -262,7 +262,7 @@ static const char *led_labels[] =
     "F",
     "C",
     "", // Space key is empty, right?
-    "Insert",
+    "Ins",
     "End",
     "8", // Numpad 8
     "/", // Numpad /
@@ -273,7 +273,7 @@ static const char *led_labels[] =
     "G",
     "V",
     "Home",
-    "PgDn",
+    "PDn",
     "9", // Numpad 9
     "*", // Numpad *
     "2", // Numpad 2
@@ -282,7 +282,7 @@ static const char *led_labels[] =
     "Y",
     "H",
     "B",
-    "PgUp",
+    "PUp",
     "\u21e7", // Right shift
     "-", // Numpad -
     "3", // Numpad 3
@@ -291,9 +291,9 @@ static const char *led_labels[] =
     "U",
     "J",
     "N",
-    "ALT", // Right Alt
+    "Alt", // Right Alt
     "]",
-    "CTRL", // Right Ctrl
+    "Ctl", // Right Ctrl
     "4", // Numpad 4
     "+", // Numpad +
     "0", // Numpad 0
@@ -306,8 +306,8 @@ static const char *led_labels[] =
     "\\", // ANSI
     "\u2191", // Up arrow
     "5", // Numpad 5
-    "\u21b5\n\U0001f5a9", // Numpad enter with a calculator sign
-    ".\nDel",
+    "\u21b5", // Numpad enter with a calculator sign
+    ".",
     "", // RGB Strip 1
     "", // RGB Strip 2
     "", // RGB Strip 3
