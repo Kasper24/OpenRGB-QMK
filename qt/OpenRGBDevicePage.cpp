@@ -4,17 +4,11 @@
 
 using namespace Ui;
 
-namespace
-{
 static void UpdateCallback(void * this_ptr)
 {
     OpenRGBDevicePage * this_obj = (OpenRGBDevicePage *)this_ptr;
 
-    // Some controllers (Like HyperX Keyboard) have a keepalive thread that will spam updates hundreds times a second
-    // If we will rebuild the interface every time, it will become unusable.
-    // This is the part where something has to be done.
-    //QMetaObject::invokeMethod(this_obj, "UpdateInterface", Qt::QueuedConnection);
-}
+    QMetaObject::invokeMethod(this_obj, "UpdateInterface", Qt::QueuedConnection);
 }
 
 OpenRGBDevicePage::OpenRGBDevicePage(RGBController *dev, QWidget *parent) :
@@ -103,6 +97,7 @@ OpenRGBDevicePage::OpenRGBDevicePage(RGBController *dev, QWidget *parent) :
 
 OpenRGBDevicePage::~OpenRGBDevicePage()
 {
+    device->UnregisterUpdateCallback(this);
     delete ui;
 }
 
@@ -391,7 +386,7 @@ void Ui::OpenRGBDevicePage::on_DirectionBox_currentIndexChanged(int /*index*/)
 
 void Ui::OpenRGBDevicePage::UpdateInterface()
 {
-    UpdateModeUi();
+    //UpdateModeUi();
     ui->DevicePreview->repaint();
 }
 
