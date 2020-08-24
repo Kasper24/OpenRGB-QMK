@@ -90,6 +90,8 @@ private slots:
     void on_ButtonSaveProfile_clicked();
     void on_ButtonLoadProfile_clicked();
     void on_ButtonDeleteProfile_clicked();
+    void on_ButtonRescanDevices_clicked();
+    void on_ButtonStopDetection_clicked();
 };
 
 #endif // OPENRGBDIALOG2_H

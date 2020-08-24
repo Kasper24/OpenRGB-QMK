@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="0" colspan="4">
+    <item row="2" column="0" colspan="5">
      <widget class="QTabWidget" name="MainTabBar">
       <property name="tabShape">
        <enum>QTabWidget::Rounded</enum>
@@ -62,46 +62,68 @@
       </widget>
      </widget>
     </item>
-    <item row="4" column="2">
-     <widget class="QPushButton" name="ButtonDeleteProfile">
-      <property name="text">
-       <string>Delete Profile</string>
-      </property>
-     </widget>
+    <item row="7" column="0" rowspan="2" colspan="5">
+     <layout class="QHBoxLayout" name="MainButtonsLayout">
+      <item>
+       <widget class="QPushButton" name="ButtonRescanDevices">
+        <property name="text">
+         <string>Rescan Devices</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ButtonSaveProfile">
+        <property name="text">
+         <string>Save Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ButtonLoadProfile">
+        <property name="text">
+         <string>Load Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ButtonDeleteProfile">
+        <property name="text">
+         <string>Delete Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="ProfileBox"/>
+      </item>
+     </layout>
     </item>
-    <item row="4" column="3">
-     <widget class="QComboBox" name="ProfileBox"/>
-    </item>
-    <item row="4" column="1">
-     <widget class="QPushButton" name="ButtonLoadProfile">
-      <property name="text">
-       <string>Load Profile</string>
-      </property>
-     </widget>
-    </item>
-    <item row="4" column="0">
-     <widget class="QPushButton" name="ButtonSaveProfile">
-      <property name="text">
-       <string>Save Profile</string>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="DetectionProgressLabel">
-      <property name="text">
-       <string>OpenRGB is detecting devices...</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1" colspan="3">
-     <widget class="QProgressBar" name="DetectionProgressBar">
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
+    <item row="4" column="0" rowspan="3" colspan="5">
+     <layout class="QHBoxLayout" name="DetectorLayout">
+      <item>
+       <widget class="QLabel" name="DetectionProgressLabel">
+        <property name="text">
+         <string>OpenRGB is detecting devices...</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="DetectionProgressBar">
+        <property name="value">
+         <number>24</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="ButtonStopDetection">
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>

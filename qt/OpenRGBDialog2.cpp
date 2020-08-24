@@ -49,7 +49,8 @@ static QString GetIconString(device_type type)
     case DEVICE_TYPE_HEADSET_STAND:
         return("headsetstand.png");
         break;
-    case DEVICE_TYPE_UNKNOWN:
+    //case DEVICE_TYPE_UNKNOWN:
+    default:
         return("unknown.png");
         break;
     }
@@ -158,7 +159,8 @@ OpenRGBDialog2::OpenRGBDialog2(std::vector<i2c_smbus_interface *>& bus, std::vec
     UpdateProfileList();
 
     /*-----------------------------------------------------*\
-    | Update the device list                                |
+    | Update the device list and make sure the              |
+    | ProgressBar gets a proper value                       |
     \*-----------------------------------------------------*/
     UpdateDevicesList();
 }
@@ -282,6 +284,11 @@ void OpenRGBDialog2::ClearDevicesList()
 void OpenRGBDialog2::UpdateDevicesList()
 {
     /*-----------------------------------------------------*\
+    | Clear on each update                                  |
+    \*-----------------------------------------------------*/
+    ClearDevicesList();
+
+    /*-----------------------------------------------------*\
     | Set up list of devices                                |
     \*-----------------------------------------------------*/
     QTabBar *DevicesTabBar = ui->DevicesTabBar->tabBar();
@@ -363,6 +370,25 @@ void OpenRGBDialog2::UpdateDevicesList()
     {
         AddI2CToolsPage();
     }
+
+    /*-----------------------------------------------------*\
+    | Update the progress bar                               |
+    \*-----------------------------------------------------*/
+    unsigned int progress = ResourceManager::get()->GetDetectionPercent();
+    ui->DetectionProgressBar->setValue(progress);
+    ui->DetectionProgressBar->setFormat(ResourceManager::get()->GetDetectionString() + QLatin1String(" (%p%)"));
+
+    bool finished = (progress == 100);
+
+    ui->DetectionProgressBar->setVisible(!finished);
+    ui->DetectionProgressLabel->setVisible(!finished);
+    ui->ButtonStopDetection->setVisible(!finished);
+
+    ui->ButtonRescanDevices->setVisible(finished);
+    ui->ButtonLoadProfile->setVisible(finished);
+    ui->ButtonSaveProfile->setVisible(finished);
+    ui->ButtonDeleteProfile->setVisible(finished);
+    ui->ProfileBox->setVisible(finished);
 }
 
 void OpenRGBDialog2::UpdateProfileList()
@@ -441,7 +467,6 @@ void OpenRGBDialog2::on_QuickWhite()
 
 void OpenRGBDialog2::on_ClientListUpdated()
 {
-    ClearDevicesList();
     UpdateDevicesList();
 
     ui->DetectionProgressBar->setValue(ResourceManager::get()->GetDetectionPercent());
@@ -585,4 +610,49 @@ void Ui::OpenRGBDialog2::on_ButtonDeleteProfile_clicked()
             UpdateProfileList();
         }
     }
+}
+
+void Ui::OpenRGBDialog2::on_ButtonRescanDevices_clicked()
+{
+    /*---------------------------------------------------------*\
+    | Pretend we've started already by showing an empty         |
+    | progress bar                                              |
+    \*---------------------------------------------------------*/
+    ui->DetectionProgressBar->setValue(0);
+    ui->DetectionProgressBar->setFormat("");
+    ui->DetectionProgressBar->setVisible(false);
+    ui->DetectionProgressLabel->setVisible(false);
+    ui->ButtonStopDetection->setVisible(false);
+
+    ui->ButtonRescanDevices->setVisible(true);
+    ui->ButtonLoadProfile->setVisible(true);
+    ui->ButtonSaveProfile->setVisible(true);
+    ui->ButtonDeleteProfile->setVisible(true);
+    ui->ProfileBox->setVisible(true);
+
+    /*---------------------------------------------------------*\
+    | Notify the detection thread that it has work to do        |
+    \*---------------------------------------------------------*/
+    ResourceManager::get()->DetectDevices();
+}
+
+void Ui::OpenRGBDialog2::on_ButtonStopDetection_clicked()
+{
+    /*---------------------------------------------------------*\
+    | Notify the detection thread that it has to die            |
+    \*---------------------------------------------------------*/
+    ResourceManager::get()->StopDeviceDetection();
+
+    /*---------------------------------------------------------*\
+    | Pretend we're done already by hiding the progress bar     |
+    \*---------------------------------------------------------*/
+    ui->DetectionProgressBar->setVisible(false);
+    ui->DetectionProgressLabel->setVisible(false);
+    ui->ButtonStopDetection->setVisible(false);
+
+    ui->ButtonRescanDevices->setVisible(true);
+    ui->ButtonLoadProfile->setVisible(true);
+    ui->ButtonSaveProfile->setVisible(true);
+    ui->ButtonDeleteProfile->setVisible(true);
+    ui->ProfileBox->setVisible(true);
 }

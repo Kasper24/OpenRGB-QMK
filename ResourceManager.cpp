@@ -19,24 +19,13 @@ ResourceManager::ResourceManager()
 {
     detection_percent = 100;
     detection_string = "";
+    detection_is_required = false;
+    DetectDevicesThread = nullptr;
 }
 
 ResourceManager::~ResourceManager()
 {
-    ResourceManager::get()->WaitForDeviceDetection();
-
-    for(RGBController* rgb_controller : rgb_controllers)
-    {
-        delete rgb_controller;
-    }
-
-    for(i2c_smbus_interface* bus : busses)
-    {
-        delete bus;
-    }
-
-    DetectDevicesThread->join();
-    delete DetectDevicesThread;
+    Cleanup();
 }
 
 void ResourceManager::RegisterI2CBus(i2c_smbus_interface *bus)
@@ -100,19 +89,59 @@ void ResourceManager::DeviceListChanged()
 
 unsigned int ResourceManager::GetDetectionPercent()
 {
-    return(detection_percent);
+    return (detection_percent.load());
 }
 
-std::string ResourceManager::GetDetectionString()
+const char *ResourceManager::GetDetectionString()
 {
-    return(detection_string);
+    return (detection_string);
+}
+
+void ResourceManager::Cleanup()
+{
+    ResourceManager::get()->WaitForDeviceDetection();
+
+    for(RGBController* rgb_controller : rgb_controllers)
+    {
+        delete rgb_controller;
+    }
+    rgb_controllers.clear();
+
+    for(i2c_smbus_interface* bus : busses)
+    {
+        delete bus;
+    }
+    busses.clear();
+
+    if(DetectDevicesThread)
+    {
+        DetectDevicesThread->join();
+        delete DetectDevicesThread;
+        DetectDevicesThread = nullptr;
+    }
 }
 
 void ResourceManager::DetectDevices()
 {
     /*-------------------------------------------------*\
+    | Do nothing is it is already detecting devices     |
+    \*-------------------------------------------------*/
+    if(detection_is_required.load())
+    {
+        return;
+    }
+
+    /*-------------------------------------------------*\
+    | If there's anything left from the last time,      |
+    | we shall remove it first                          |
+    \*-------------------------------------------------*/
+    detection_percent = 0;
+    Cleanup();
+
+    /*-------------------------------------------------*\
     | Start the device detection thread                 |
     \*-------------------------------------------------*/
+    detection_is_required = true;
     DetectDevicesThread = new std::thread(&ResourceManager::DetectDevicesThreadFunction, this);
 
     /*-------------------------------------------------*\
@@ -138,7 +167,7 @@ void ResourceManager::DetectDevicesThreadFunction()
     /*-------------------------------------------------*\
     | Detect i2c busses                                 |
     \*-------------------------------------------------*/
-    for(int i2c_bus_detector_idx = 0; i2c_bus_detector_idx < i2c_bus_detectors.size(); i2c_bus_detector_idx++)
+    for(int i2c_bus_detector_idx = 0; i2c_bus_detector_idx < i2c_bus_detectors.size() && detection_is_required.load(); i2c_bus_detector_idx++)
     {
         i2c_bus_detectors[i2c_bus_detector_idx](busses);
     }
@@ -146,9 +175,9 @@ void ResourceManager::DetectDevicesThreadFunction()
     /*-------------------------------------------------*\
     | Detect i2c devices                                |
     \*-------------------------------------------------*/
-    for(int i2c_detector_idx = 0; i2c_detector_idx < i2c_device_detectors.size(); i2c_detector_idx++)
+    for(int i2c_detector_idx = 0; i2c_detector_idx < i2c_device_detectors.size() && detection_is_required.load(); i2c_detector_idx++)
     {
-        detection_string = i2c_device_detector_strings[i2c_detector_idx];
+        detection_string = i2c_device_detector_strings[i2c_detector_idx].c_str();
         DeviceListChanged();
 
         i2c_device_detectors[i2c_detector_idx](busses, rgb_controllers);
@@ -171,9 +200,9 @@ void ResourceManager::DetectDevicesThreadFunction()
     /*-------------------------------------------------*\
     | Detect other devices                              |
     \*-------------------------------------------------*/
-    for(int detector_idx = 0; detector_idx < device_detectors.size(); detector_idx++)
+    for(int detector_idx = 0; detector_idx < device_detectors.size() && detection_is_required.load(); detector_idx++)
     {
-        detection_string = device_detector_strings[detector_idx];
+        detection_string = device_detector_strings[detector_idx].c_str();
         DeviceListChanged();
 
         device_detectors[detector_idx](rgb_controllers);
@@ -194,8 +223,24 @@ void ResourceManager::DetectDevicesThreadFunction()
     }
 
     profile_manager.LoadSizeFromProfile("sizes.ors");
-    
+
+    /*-------------------------------------------------*\
+    | Make sure that when the detection is done,        |
+    | progress bar is set to 100%                       |
+    \*-------------------------------------------------*/
+
+    detection_is_required = false;
+    detection_percent = 100;
+    detection_string = "";
+
     DetectDeviceMutex.unlock();
+}
+
+void ResourceManager::StopDeviceDetection()
+{
+    detection_is_required = false;
+    detection_percent = 100;
+    detection_string = "Stopping";
 }
 
 void ResourceManager::WaitForDeviceDetection()
