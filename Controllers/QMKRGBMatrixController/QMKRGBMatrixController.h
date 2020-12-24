@@ -125,7 +125,7 @@ private:
     std::map<uint8_t, std::string> QMKKeycodeToKeyName
     {
         { 0, "" },
-        { 1, "Menu" },
+        { 1, "Right Fn" },
         { 2, "" },
         { 3, "" },
         { 4, "A" },
@@ -225,7 +225,7 @@ private:
         { 98, "Number Pad 0" },
         { 99, "Number Pad ." },
         { 100, "" },
-        { 101, "" },
+        { 101, "Menu" },
         { 102, "" },
         { 103, "" },
         { 104, "" },
