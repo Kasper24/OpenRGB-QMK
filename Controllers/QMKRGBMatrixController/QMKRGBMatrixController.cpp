@@ -252,6 +252,26 @@ std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes()
     return modes;
 }
 
+unsigned int QMKRGBMatrixController::GetActiveMode()
+{
+    unsigned char usb_buf[65];
+    /*-----------------------------------------------------*\
+    | Zero out buffer                                       |
+    \*-----------------------------------------------------*/
+    memset(usb_buf, 0x00, sizeof(usb_buf));
+
+    /*-----------------------------------------------------*\
+    | Set up config table request packet                    |
+    \*-----------------------------------------------------*/
+    usb_buf[0x00] = 0x00;
+    usb_buf[0x01] = QMK_RGBMATRIX_GET_ACTIVE_MODE;
+
+    hid_write(dev, (unsigned char*)usb_buf, 65);
+    hid_read_timeout(dev, (unsigned char*)usb_buf, 65, 1000);
+
+    return usb_buf[1];
+}
+
 unsigned int QMKRGBMatrixController::GetZonesCount()
 {
     unsigned char usb_buf[65];
