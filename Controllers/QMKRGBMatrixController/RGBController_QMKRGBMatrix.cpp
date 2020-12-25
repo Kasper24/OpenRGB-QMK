@@ -53,10 +53,14 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
         AlphaMod.name       = "Alpha Mod";
         AlphaMod.value      = current_mode++;;
         AlphaMod.flags      = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED;
-        AlphaMod.color_mode = MODE_COLORS_PER_LED;
         AlphaMod.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
         AlphaMod.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+        AlphaMod.colors_min = 1;
+        AlphaMod.colors_max = 1;
         AlphaMod.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+        AlphaMod.color_mode = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+        AlphaMod.colors.resize(1);
+        AlphaMod.colors[0] = hsv;
         modes.push_back(AlphaMod);
     }
     
