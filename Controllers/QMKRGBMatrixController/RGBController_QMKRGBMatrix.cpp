@@ -683,11 +683,7 @@ void RGBController_QMKRGBMatrix::DeviceUpdateMode()
     }
     else if(modes[active_mode].color_mode == MODE_COLORS_NONE)
     {
-        RGBColor color = ToRGBColor(255, 0, 0);
-        hsv_t hsv_color;
-        rgb2hsv(color, &hsv_color);
-        qmk_rgb_matrix->SetColorModeAndSpeed(hsv_color, modes[active_mode].value, modes[active_mode].speed);
-        //qmk_rgb_matrix->SetModeAndSpeed(modes[active_mode].value, modes[active_mode].speed);
+        qmk_rgb_matrix->SetModeAndSpeed(modes[active_mode].value, modes[active_mode].speed);
     }
     else if(modes[active_mode].color_mode == MODE_COLORS_MODE_SPECIFIC)
     {
