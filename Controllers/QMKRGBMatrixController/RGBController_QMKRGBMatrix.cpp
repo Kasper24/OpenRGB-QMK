@@ -566,6 +566,8 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
         modes.push_back(SolidMultiSplash);
     }
 
+    active_mode = qmk_rgb_matrix_ptr->GetActiveMode() - 1;
+
     SetupZones();
 }
 
