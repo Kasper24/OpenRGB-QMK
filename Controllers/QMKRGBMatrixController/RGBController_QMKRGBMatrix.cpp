@@ -51,13 +51,13 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
 
     mode GradientUpDown;
     GradientUpDown.name       = "Gradient Up Down";
-    GradientUpDown.value      = QMK_RGBMATRIX_MODE_GRADIENT_LEFT_RIGHT;
+    GradientUpDown.value      = QMK_RGBMATRIX_MODE_GRADIENT_UP_DOWN;
     GradientUpDown.flags      = 0;
     modes.push_back(GradientUpDown);
 
     mode GradientLeftRight;
     GradientLeftRight.name       = "Gradient Left Right";
-    GradientLeftRight.value      = QMK_RGBMATRIX_MODE_GRADIENT_UP_DOWN;
+    GradientLeftRight.value      = QMK_RGBMATRIX_MODE_GRADIENT_LEFT_RIGHT;
     GradientLeftRight.flags      = 0;
     modes.push_back(GradientLeftRight);
 
