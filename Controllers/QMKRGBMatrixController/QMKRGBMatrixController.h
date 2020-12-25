@@ -27,6 +27,7 @@ enum CommandsId
 
     QMK_RGBMATRIX_GET_QMK_VERSION,
     QMK_RGBMATRIX_GET_DEVICE_NAME,
+    QMK_RGBMATRIX_GET_ENABLED_MODES,
     QMK_RGBMATRIX_GET_ZONES_COUNT,
     QMK_RGBMATRIX_GET_ZONE_NAME,
     QMK_RGBMATRIX_GET_ZONE_TYPE,
@@ -106,6 +107,7 @@ public:
 
     std::string GetQMKVersion();
     std::string GetDeviceName();
+    std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes();
     unsigned int GetZonesCount();
     std::string GetZoneName(int zone);
     unsigned int GetZoneType(int zone);
