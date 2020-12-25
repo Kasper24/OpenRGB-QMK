@@ -19,6 +19,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     type = DEVICE_TYPE_KEYBOARD;
     location = qmk_rgb_matrix_ptr->GetLocation();
     version = qmk_rgb_matrix_ptr->GetQMKVersion();
+    unsigned int hsv = qmk_rgb_matrix->GetHSV();
 
     mode Direct;
     Direct.name       = "Direct";
@@ -35,7 +36,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidColor.colors_max = 1;
     SolidColor.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidColor.colors.resize(1);
-    SolidColor.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidColor.colors[0] = hsv;
     modes.push_back(SolidColor);
 
     mode AlphaMod;
@@ -71,7 +72,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     Breathing.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     Breathing.color_mode = MODE_COLORS_MODE_SPECIFIC;
     Breathing.colors.resize(1);
-    Breathing.colors[0] = qmk_rgb_matrix->GetHSV();
+    Breathing.colors[0] = hsv;
     modes.push_back(Breathing);
 
     mode BandSat;
@@ -85,7 +86,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandSat.colors.resize(1);
-    BandSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandSat.colors[0] = hsv;
     modes.push_back(BandSat);
 
     mode BandVal;
@@ -99,7 +100,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandVal.colors.resize(1);
-    BandVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandVal.colors[0] = hsv;
     modes.push_back(BandVal);
 
     mode BandPinwheelSat;
@@ -113,7 +114,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandPinwheelSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandPinwheelSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandPinwheelSat.colors.resize(1);
-    BandPinwheelSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandPinwheelSat.colors[0] = hsv;
     modes.push_back(BandPinwheelSat);
 
     mode BandPinwheelVal;
@@ -127,7 +128,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandPinwheelVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandPinwheelVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandPinwheelVal.colors.resize(1);
-    BandPinwheelVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandPinwheelVal.colors[0] = hsv;
     modes.push_back(BandPinwheelVal);
 
     mode BandSpiralSat;
@@ -141,7 +142,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandSpiralSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandSpiralSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandSpiralSat.colors.resize(1);
-    BandSpiralSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandSpiralSat.colors[0] = hsv;
     modes.push_back(BandSpiralSat);
 
     mode BandSpiralVal;
@@ -155,7 +156,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     BandSpiralVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     BandSpiralVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
     BandSpiralVal.colors.resize(1);
-    BandSpiralVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    BandSpiralVal.colors[0] = hsv;
     modes.push_back(BandSpiralVal);
 
     mode CycleAll;
@@ -292,7 +293,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveSimple.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveSimple.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveSimple.colors.resize(1);
-    SolidReactiveSimple.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveSimple.colors[0] = hsv;
     modes.push_back(SolidReactiveSimple);
 
     mode SolidReactive;
@@ -306,7 +307,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactive.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactive.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactive.colors.resize(1);
-    SolidReactive.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactive.colors[0] = hsv;
     modes.push_back(SolidReactive);
 
     mode SolidReactiveWide;
@@ -320,7 +321,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveWide.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveWide.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveWide.colors.resize(1);
-    SolidReactiveWide.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveWide.colors[0] = hsv;
     modes.push_back(SolidReactiveWide);
 
 
@@ -335,7 +336,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveMultiWide.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiWide.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveMultiWide.colors.resize(1);
-    SolidReactiveMultiWide.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveMultiWide.colors[0] = hsv;
     modes.push_back(SolidReactiveMultiWide);
 
     mode SolidReactiveCross;
@@ -349,7 +350,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveCross.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveCross.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveCross.colors.resize(1);
-    SolidReactiveCross.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveCross.colors[0] = hsv;
     modes.push_back(SolidReactiveCross);
 
     mode SolidReactiveMultiCross;
@@ -363,7 +364,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveMultiCross.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiCross.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveMultiCross.colors.resize(1);
-    SolidReactiveMultiCross.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveMultiCross.colors[0] = hsv;
     modes.push_back(SolidReactiveMultiCross);
 
     mode SolidReactiveNexus;
@@ -377,8 +378,8 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveNexus.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveNexus.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveNexus.colors.resize(1);
-    SolidReactiveNexus.colors[0] = qmk_rgb_matrix->GetHSV();
-    SolidReactiveNexus.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveNexus.colors[0] = hsv;
+    SolidReactiveNexus.colors[0] = hsv;
     modes.push_back(SolidReactiveNexus);
 
     mode SolidReactiveMultiNexus;
@@ -392,7 +393,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveMultiNexus.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiNexus.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveMultiNexus.colors.resize(1);
-    SolidReactiveMultiNexus.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveMultiNexus.colors[0] = hsv;
     modes.push_back(SolidReactiveMultiNexus);
 
     mode Splash;
@@ -424,7 +425,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidSplash.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidSplash.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidSplash.colors.resize(1);
-    SolidSplash.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidSplash.colors[0] = hsv;
     modes.push_back(SolidSplash);
 
     mode SolidMultiSplash;
@@ -438,7 +439,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidMultiSplash.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidMultiSplash.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidMultiSplash.colors.resize(1);
-    SolidMultiSplash.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidMultiSplash.colors[0] = hsv;
     modes.push_back(SolidMultiSplash);
 
     SetupZones();
