@@ -149,13 +149,8 @@ void QMKRGBMatrixController::SetColorModeAndSpeed(hsv_t hsv_color, unsigned char
     \*-----------------------------------------------------*/
     usb_buf[0x00]   = 0x00;
     usb_buf[0x01]   = QMK_RGBMATRIX_SET_COLOR_MODE_AND_SPEED;
-
     // qmk hue range is between 0-255, instead of the regular 0-359, so hue needs to be converted
-    unsigned int oldRange = 359;
-    unsigned int newRange = 255;
-    unsigned int convertedHue = (hsv_color.hue * newRange / oldRange);
-
-    usb_buf[0x02]   = convertedHue;
+    usb_buf[0x02]   = hsv_color.hue * 255 / 359;
     usb_buf[0x03]   = hsv_color.saturation;
     usb_buf[0x04]   = hsv_color.value;
     usb_buf[0x05]   = mode;
