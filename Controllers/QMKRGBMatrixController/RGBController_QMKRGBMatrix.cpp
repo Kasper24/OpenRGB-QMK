@@ -510,7 +510,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
             if(leds.size() < zones[0].leds_count && led_idx < led_names.size()) 
                 keyboard_led.name = "Key: " + led_names[led_idx];
             else 
-                keyboard_led.name = "Underglow: " + std::to_string(led_idx);
+                keyboard_led.name = zones[i].name + ": " + std::to_string(led_idx);
 
             leds.push_back(keyboard_led);
         }
