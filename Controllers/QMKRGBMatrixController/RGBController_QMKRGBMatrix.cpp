@@ -22,46 +22,43 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
 
     mode Direct;
     Direct.name       = "Direct";
-    Direct.value      = QMK_RGBMATRIX_MODE_HID_DIRECT;
+    Direct.value      = QMK_RGBMATRIX_MODE_OPENRGB_DIRECT;
     Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
     Direct.color_mode = MODE_COLORS_PER_LED;
     modes.push_back(Direct);
 
-    mode Static;
-    Static.name       = "Static";
-    Static.value      = QMK_RGBMATRIX_MODE_STATIC;
-    Static.flags      = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    Static.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    Static.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    Static.colors_min = 1;
-    Static.colors_max = 1;
-    Static.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    Static.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    Static.colors.resize(1);
-    Static.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(Static);
+    mode SolidColor;
+    SolidColor.name       = "Static";
+    SolidColor.value      = QMK_RGBMATRIX_MODE_SOLID_COLOR;
+    SolidColor.flags      = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    SolidColor.colors_min = 1;
+    SolidColor.colors_max = 1;
+    SolidColor.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    SolidColor.colors.resize(1);
+    SolidColor.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidColor);
 
-    /*mode AlphaMod;
+    mode AlphaMod;
     AlphaMod.name       = "Alpha Mod";
     AlphaMod.value      = QMK_RGBMATRIX_MODE_ALPHA_MOD;
-    AlphaMod.flags      = MODE_FLAG_HAS_PER_LED_COLOR | MODE_FLAG_HAS_SPEED;
+    AlphaMod.flags      = MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED;
     AlphaMod.color_mode = MODE_COLORS_PER_LED;
     AlphaMod.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     AlphaMod.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
     AlphaMod.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     modes.push_back(AlphaMod);
 
-    mode StaticHorizontalGradient;
-    StaticHorizontalGradient.name       = "Static Horizontal Gradient";
-    StaticHorizontalGradient.value      = QMK_RGBMATRIX_MODE_STATIC_GRADIENT_LEFT_RIGHT;
-    StaticHorizontalGradient.flags      = 0;
-    modes.push_back(StaticHorizontalGradient);
+    mode GradientUpDown;
+    GradientUpDown.name       = "Gradient Up Down";
+    GradientUpDown.value      = QMK_RGBMATRIX_MODE_GRADIENT_LEFT_RIGHT;
+    GradientUpDown.flags      = 0;
+    modes.push_back(GradientUpDown);
 
-    mode StaticVerticalGradient;
-    StaticVerticalGradient.name       = "Static Vertical Gradient";
-    StaticVerticalGradient.value      = QMK_RGBMATRIX_MODE_STATIC_GRADIENT_UP_DOWN;
-    StaticVerticalGradient.flags      = 0;
-    modes.push_back(StaticVerticalGradient);*/
+    mode GradientLeftRight;
+    GradientLeftRight.name       = "Gradient Left Right";
+    GradientLeftRight.value      = QMK_RGBMATRIX_MODE_GRADIENT_UP_DOWN;
+    GradientLeftRight.flags      = 0;
+    modes.push_back(GradientLeftRight);
 
     mode Breathing;
     Breathing.name       = "Breathing";
@@ -77,116 +74,116 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     Breathing.colors[0] = qmk_rgb_matrix->GetHSV();
     modes.push_back(Breathing);
 
-    mode ScrollOnWhite;
-    ScrollOnWhite.name       = "Scroll On White";
-    ScrollOnWhite.value      = QMK_RGBMATRIX_MODE_BAND_SAT;
-    ScrollOnWhite.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    ScrollOnWhite.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    ScrollOnWhite.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    ScrollOnWhite.colors_min = 1;
-    ScrollOnWhite.colors_max = 1;
-    ScrollOnWhite.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    ScrollOnWhite.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    ScrollOnWhite.colors.resize(1);
-    ScrollOnWhite.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(ScrollOnWhite);
+    mode BandSat;
+    BandSat.name       = "Band Saturation";
+    BandSat.value      = QMK_RGBMATRIX_MODE_BAND_SAT;
+    BandSat.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandSat.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandSat.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandSat.colors_min = 1;
+    BandSat.colors_max = 1;
+    BandSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandSat.colors.resize(1);
+    BandSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandSat);
 
-    mode Scroll;
-    Scroll.name       = "Scroll";
-    Scroll.value      = QMK_RGBMATRIX_MODE_BAND_VAL;
-    Scroll.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    Scroll.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    Scroll.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    Scroll.colors_min = 1;
-    Scroll.colors_max = 1;
-    Scroll.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    Scroll.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    Scroll.colors.resize(1);
-    Scroll.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(Scroll);
+    mode BandVal;
+    BandVal.name       = "Band Value";
+    BandVal.value      = QMK_RGBMATRIX_MODE_BAND_VAL;
+    BandVal.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandVal.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandVal.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandVal.colors_min = 1;
+    BandVal.colors_max = 1;
+    BandVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandVal.colors.resize(1);
+    BandVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandVal);
 
-    mode PinWheelSpinOnWhite;
-    PinWheelSpinOnWhite.name       = "PinWheel Spin On White";
-    PinWheelSpinOnWhite.value      = QMK_RGBMATRIX_MODE_BAND_PINWHEEL_SAT;
-    PinWheelSpinOnWhite.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    PinWheelSpinOnWhite.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    PinWheelSpinOnWhite.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    PinWheelSpinOnWhite.colors_min = 1;
-    PinWheelSpinOnWhite.colors_max = 1;
-    PinWheelSpinOnWhite.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    PinWheelSpinOnWhite.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    PinWheelSpinOnWhite.colors.resize(1);
-    PinWheelSpinOnWhite.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(PinWheelSpinOnWhite);
+    mode BandPinwheelSat;
+    BandPinwheelSat.name       = "Band Pinwheel Saturation";
+    BandPinwheelSat.value      = QMK_RGBMATRIX_MODE_BAND_PINWHEEL_SAT;
+    BandPinwheelSat.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandPinwheelSat.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandPinwheelSat.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandPinwheelSat.colors_min = 1;
+    BandPinwheelSat.colors_max = 1;
+    BandPinwheelSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandPinwheelSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandPinwheelSat.colors.resize(1);
+    BandPinwheelSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandPinwheelSat);
 
-    mode PinWheelSpin;
-    PinWheelSpin.name       = "PinWheel Spin";
-    PinWheelSpin.value      = QMK_RGBMATRIX_MODE_BAND_PINWHEEL_VAL;
-    PinWheelSpin.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    PinWheelSpin.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    PinWheelSpin.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    PinWheelSpin.colors_min = 1;
-    PinWheelSpin.colors_max = 1;
-    PinWheelSpin.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    PinWheelSpin.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    PinWheelSpin.colors.resize(1);
-    PinWheelSpin.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(PinWheelSpin);
+    mode BandPinwheelVal;
+    BandPinwheelVal.name       = "Band Pinwheel Value";
+    BandPinwheelVal.value      = QMK_RGBMATRIX_MODE_BAND_PINWHEEL_VAL;
+    BandPinwheelVal.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandPinwheelVal.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandPinwheelVal.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandPinwheelVal.colors_min = 1;
+    BandPinwheelVal.colors_max = 1;
+    BandPinwheelVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandPinwheelVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandPinwheelVal.colors.resize(1);
+    BandPinwheelVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandPinwheelVal);
 
-    mode SpiralSpinOnWhite;
-    SpiralSpinOnWhite.name       = "Spiral Spin On White";
-    SpiralSpinOnWhite.value      = QMK_RGBMATRIX_MODE_BAND_SPIRAL_SAT;
-    SpiralSpinOnWhite.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    SpiralSpinOnWhite.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    SpiralSpinOnWhite.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SpiralSpinOnWhite.colors_min = 1;
-    SpiralSpinOnWhite.colors_max = 1;
-    SpiralSpinOnWhite.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    SpiralSpinOnWhite.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SpiralSpinOnWhite.colors.resize(1);
-    SpiralSpinOnWhite.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(SpiralSpinOnWhite);
+    mode BandSpiralSat;
+    BandSpiralSat.name       = "Band Spiral Saturation";
+    BandSpiralSat.value      = QMK_RGBMATRIX_MODE_BAND_SPIRAL_SAT;
+    BandSpiralSat.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandSpiralSat.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandSpiralSat.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandSpiralSat.colors_min = 1;
+    BandSpiralSat.colors_max = 1;
+    BandSpiralSat.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandSpiralSat.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandSpiralSat.colors.resize(1);
+    BandSpiralSat.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandSpiralSat);
 
-    mode SpiralSpin;
-    SpiralSpin.name       = "Spiral Spin";
-    SpiralSpin.value      = QMK_RGBMATRIX_MODE_BAND_SPIRAL_VAL;
-    SpiralSpin.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    SpiralSpin.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    SpiralSpin.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SpiralSpin.colors_min = 1;
-    SpiralSpin.colors_max = 1;
-    SpiralSpin.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    SpiralSpin.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SpiralSpin.colors.resize(1);
-    SpiralSpin.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(SpiralSpin);
+    mode BandSpiralVal;
+    BandSpiralVal.name       = "Band Spiral Value";
+    BandSpiralVal.value      = QMK_RGBMATRIX_MODE_BAND_SPIRAL_VAL;
+    BandSpiralVal.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    BandSpiralVal.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    BandSpiralVal.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    BandSpiralVal.colors_min = 1;
+    BandSpiralVal.colors_max = 1;
+    BandSpiralVal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    BandSpiralVal.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    BandSpiralVal.colors.resize(1);
+    BandSpiralVal.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(BandSpiralVal);
 
-    mode ColorCycle;
-    ColorCycle.name          = "Color Cycle";
-    ColorCycle.value         = QMK_RGBMATRIX_MODE_CYCLE_ALL;
-    ColorCycle.flags         = MODE_FLAG_HAS_SPEED;
-    ColorCycle.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    ColorCycle.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    ColorCycle.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(ColorCycle);
+    mode CycleAll;
+    CycleAll.name          = "Cycle All";
+    CycleAll.value         = QMK_RGBMATRIX_MODE_CYCLE_ALL;
+    CycleAll.flags         = MODE_FLAG_HAS_SPEED;
+    CycleAll.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    CycleAll.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    CycleAll.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(CycleAll);
 
-    mode RainbowHorizontal;
-    RainbowHorizontal.name          = "Rainbow Horizontal";
-    RainbowHorizontal.value         = QMK_RGBMATRIX_MODE_CYCLE_LEFT_RIGHT;
-    RainbowHorizontal.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowHorizontal.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowHorizontal.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowHorizontal.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowHorizontal);
+    mode CycleLeftRight;
+    CycleLeftRight.name          = "Cycle Left Right";
+    CycleLeftRight.value         = QMK_RGBMATRIX_MODE_CYCLE_LEFT_RIGHT;
+    CycleLeftRight.flags         = MODE_FLAG_HAS_SPEED;
+    CycleLeftRight.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    CycleLeftRight.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    CycleLeftRight.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(CycleLeftRight);
 
-    mode RainbowVertical;
-    RainbowVertical.name          = "Rainbow Vertical";
-    RainbowVertical.value         = QMK_RGBMATRIX_MODE_CYCLE_UP_DOWN;
-    RainbowVertical.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowVertical.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowVertical.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowVertical.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowVertical);
+    mode CycleUpDown;
+    CycleUpDown.name          = "Cycle Up Down";
+    CycleUpDown.value         = QMK_RGBMATRIX_MODE_CYCLE_UP_DOWN;
+    CycleUpDown.flags         = MODE_FLAG_HAS_SPEED;
+    CycleUpDown.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    CycleUpDown.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    CycleUpDown.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(CycleUpDown);
 
     mode RainbowOutIn;
     RainbowOutIn.name          = "Rainbow Out In";
@@ -215,32 +212,32 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     RainbowMovingChevron.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     modes.push_back(RainbowMovingChevron);
 
-    mode RainbowDualBeacon;
-    RainbowDualBeacon.name          = "Rainbow Dual Beacons";
-    RainbowDualBeacon.value         = QMK_RGBMATRIX_MODE_DUAL_BEACON;
-    RainbowDualBeacon.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowDualBeacon.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowDualBeacon.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowDualBeacon.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowDualBeacon);
+    mode CyclePinWheel;
+    CyclePinWheel.name          = "Cycle Pinwheel";
+    CyclePinWheel.value         = QMK_RGBMATRIX_MODE_CYCLE_PINWHEEL;
+    CyclePinWheel.flags         = MODE_FLAG_HAS_SPEED;
+    CyclePinWheel.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    CyclePinWheel.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    CyclePinWheel.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(CyclePinWheel);
 
-    mode RainbowPinWheel;
-    RainbowPinWheel.name          = "Rainbow Pin Wheel";
-    RainbowPinWheel.value         = QMK_RGBMATRIX_MODE_CYCLE_PINWHEEL;
-    RainbowPinWheel.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowPinWheel.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowPinWheel.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowPinWheel.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowPinWheel);
+    mode CycleSpiral;
+    CycleSpiral.name          = "Cycle Spiral";
+    CycleSpiral.value         = QMK_RGBMATRIX_MODE_CYCLE_SPIRAL;
+    CycleSpiral.flags         = MODE_FLAG_HAS_SPEED;
+    CycleSpiral.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    CycleSpiral.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    CycleSpiral.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(CycleSpiral);
 
-    mode RainbowCycleSpiral;
-    RainbowCycleSpiral.name          = "Rainbow Spiral";
-    RainbowCycleSpiral.value         = QMK_RGBMATRIX_MODE_CYCLE_SPIRAL;
-    RainbowCycleSpiral.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowCycleSpiral.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowCycleSpiral.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowCycleSpiral.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowCycleSpiral);
+    mode DualBeacon;
+    DualBeacon.name          = "Dual Beacon";
+    DualBeacon.value         = QMK_RGBMATRIX_MODE_DUAL_BEACON;
+    DualBeacon.flags         = MODE_FLAG_HAS_SPEED;
+    DualBeacon.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    DualBeacon.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    DualBeacon.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(DualBeacon);
 
     mode RainbowBeacon;
     RainbowBeacon.name          = "Rainbow Beacon";
@@ -251,14 +248,14 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     RainbowBeacon.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     modes.push_back(RainbowBeacon);
 
-    mode RainbowDualPinWheels;
-    RainbowDualPinWheels.name          = "Rainbow Dual Pin Wheels";
-    RainbowDualPinWheels.value         = QMK_RGBMATRIX_MODE_RAINBOW_PINWHEELS;
-    RainbowDualPinWheels.flags         = MODE_FLAG_HAS_SPEED;
-    RainbowDualPinWheels.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    RainbowDualPinWheels.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    RainbowDualPinWheels.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(RainbowDualPinWheels);
+    mode RainbowPinwheels;
+    RainbowPinwheels.name          = "Rainbow Pinwheels";
+    RainbowPinwheels.value         = QMK_RGBMATRIX_MODE_RAINBOW_PINWHEELS;
+    RainbowPinwheels.flags         = MODE_FLAG_HAS_SPEED;
+    RainbowPinwheels.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    RainbowPinwheels.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    RainbowPinwheels.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    modes.push_back(RainbowPinwheels);
 
     mode Raindrops;
     Raindrops.name          = "Raindrops";
@@ -284,20 +281,6 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     DigitalRain.flags         = 0;
     modes.push_back(DigitalRain);
 
-    mode SolidReactive;
-    SolidReactive.name       = "Solid Reactive";
-    SolidReactive.value      = QMK_RGBMATRIX_MODE_SOLID_REACTIVE;
-    SolidReactive.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
-    SolidReactive.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-    SolidReactive.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SolidReactive.colors_min = 1;
-    SolidReactive.colors_max = 1;
-    SolidReactive.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    SolidReactive.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SolidReactive.colors.resize(1);
-    SolidReactive.colors[0] = qmk_rgb_matrix->GetHSV();
-    modes.push_back(SolidReactive);
-
     mode SolidReactiveSimple;
     SolidReactiveSimple.name       = "Solid Reactive Simple";
     SolidReactiveSimple.value      = QMK_RGBMATRIX_MODE_SOLID_REACTIVE_SIMPLE;
@@ -311,6 +294,20 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveSimple.colors.resize(1);
     SolidReactiveSimple.colors[0] = qmk_rgb_matrix->GetHSV();
     modes.push_back(SolidReactiveSimple);
+
+    mode SolidReactive;
+    SolidReactive.name       = "Solid Reactive";
+    SolidReactive.value      = QMK_RGBMATRIX_MODE_SOLID_REACTIVE;
+    SolidReactive.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
+    SolidReactive.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+    SolidReactive.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+    SolidReactive.colors_min = 1;
+    SolidReactive.colors_max = 1;
+    SolidReactive.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    SolidReactive.color_mode = MODE_COLORS_MODE_SPECIFIC;
+    SolidReactive.colors.resize(1);
+    SolidReactive.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidReactive);
 
     mode SolidReactiveWide;
     SolidReactiveWide.name       = "Solid Reactive Wide";
@@ -327,18 +324,19 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     modes.push_back(SolidReactiveWide);
 
 
-    /*mode SolidReactiveMultiWide;
+    mode SolidReactiveMultiWide;
     SolidReactiveMultiWide.name       = "Solid Reactive Multi Wide";
     SolidReactiveMultiWide.value      = QMK_RGBMATRIX_MODE_BREATHING;
     SolidReactiveMultiWide.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
     SolidReactiveMultiWide.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     SolidReactiveMultiWide.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SolidReactiveMultiWide.colors_min = 2;
-    SolidReactiveMultiWide.colors_max = 2;
+    SolidReactiveMultiWide.colors_min = 1;
+    SolidReactiveMultiWide.colors_max = 1;
     SolidReactiveMultiWide.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiWide.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SolidReactiveMultiWide.colors.resize(2);
-    modes.push_back(SolidReactiveMultiWide);*/
+    SolidReactiveMultiWide.colors.resize(1);
+    SolidReactiveMultiWide.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidReactiveMultiWide);
 
     mode SolidReactiveCross;
     SolidReactiveCross.name       = "Solid Reactive Cross";
@@ -354,18 +352,19 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveCross.colors[0] = qmk_rgb_matrix->GetHSV();
     modes.push_back(SolidReactiveCross);
 
-    /*mode SolidReactiveMultiCross;
+    mode SolidReactiveMultiCross;
     SolidReactiveMultiCross.name       = "Solid Reactive Multi Cross";
     SolidReactiveMultiCross.value      = QMK_RGBMATRIX_MODE_SOLID_REACTIVE_MULTICROSS;
     SolidReactiveMultiCross.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
     SolidReactiveMultiCross.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     SolidReactiveMultiCross.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SolidReactiveMultiCross.colors_min = 2;
-    SolidReactiveMultiCross.colors_max = 2;
+    SolidReactiveMultiCross.colors_min = 1;
+    SolidReactiveMultiCross.colors_max = 1;
     SolidReactiveMultiCross.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiCross.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SolidReactiveMultiCross.colors.resize(2);
-    modes.push_back(SolidReactiveMultiCross)*/
+    SolidReactiveMultiCross.colors.resize(1);
+    SolidReactiveMultiCross.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidReactiveMultiCross);
 
     mode SolidReactiveNexus;
     SolidReactiveNexus.name       = "Solid Reactive Nexus";
@@ -379,20 +378,22 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidReactiveNexus.color_mode = MODE_COLORS_MODE_SPECIFIC;
     SolidReactiveNexus.colors.resize(1);
     SolidReactiveNexus.colors[0] = qmk_rgb_matrix->GetHSV();
+    SolidReactiveNexus.colors[0] = qmk_rgb_matrix->GetHSV();
     modes.push_back(SolidReactiveNexus);
 
-    /*mode SolidReactiveMultiNexus;
+    mode SolidReactiveMultiNexus;
     SolidReactiveMultiNexus.name       = "Solid Reactive Multi Nexus";
     SolidReactiveMultiNexus.value      = QMK_RGBMATRIX_MODE_SOLID_REACTIVE_MULTINEXUS;
     SolidReactiveMultiNexus.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
     SolidReactiveMultiNexus.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     SolidReactiveMultiNexus.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SolidReactiveMultiNexus.colors_min = 2;
-    SolidReactiveMultiNexus.colors_max = 2;
+    SolidReactiveMultiNexus.colors_min = 1;
+    SolidReactiveMultiNexus.colors_max = 1;
     SolidReactiveMultiNexus.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidReactiveMultiNexus.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SolidReactiveMultiNexus.colors.resize(2);
-    modes.push_back(SolidReactiveMultiNexus);*/
+    SolidReactiveMultiNexus.colors.resize(1);
+    SolidReactiveMultiNexus.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidReactiveMultiNexus);
 
     mode Splash;
     Splash.name       = "Rainbow Reactive Splash";
@@ -403,14 +404,14 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     Splash.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     modes.push_back(Splash);
 
-    /*mode MultiSplash;
+    mode MultiSplash;
     MultiSplash.name       = "Rainbow Reactive Multi Splash";
     MultiSplash.value      = QMK_RGBMATRIX_MODE_MULTISPLASH;
     MultiSplash.flags      = MODE_FLAG_HAS_SPEED;
     MultiSplash.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     MultiSplash.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
     MultiSplash.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    modes.push_back(MultiSplash);*/
+    modes.push_back(MultiSplash);
 
     mode SolidSplash;
     SolidSplash.name       = "Solid Reactive Splash";
@@ -426,18 +427,19 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     SolidSplash.colors[0] = qmk_rgb_matrix->GetHSV();
     modes.push_back(SolidSplash);
 
-    /*mode SolidMultiSplash;
+    mode SolidMultiSplash;
     SolidMultiSplash.name       = "Solid Reactive Multi Splash";
     SolidMultiSplash.value      = QMK_RGBMATRIX_MODE_SOLID_MULTISPLASH;
     SolidMultiSplash.flags      = MODE_FLAG_HAS_SPEED | MODE_FLAG_HAS_MODE_SPECIFIC_COLOR;
     SolidMultiSplash.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
     SolidMultiSplash.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-    SolidMultiSplash.colors_min = 2;
-    SolidMultiSplash.colors_max = 2;
+    SolidMultiSplash.colors_min = 1;
+    SolidMultiSplash.colors_max = 1;
     SolidMultiSplash.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
     SolidMultiSplash.color_mode = MODE_COLORS_MODE_SPECIFIC;
-    SolidMultiSplash.colors.resize(2);
-    modes.push_back(SolidMultiSplash);*/
+    SolidMultiSplash.colors.resize(1);
+    SolidMultiSplash.colors[0] = qmk_rgb_matrix->GetHSV();
+    modes.push_back(SolidMultiSplash);
 
     SetupZones();
 }
