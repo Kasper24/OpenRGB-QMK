@@ -28,6 +28,7 @@ enum openrgb_command_id {
 
     QMK_RGBMATRIX_GET_QMK_VERSION,
     QMK_RGBMATRIX_GET_DEVICE_NAME,
+    QMK_RGBMATRIX_GET_DEVICE_VENDOR,
 
     QMK_RGBMATRIX_GET_ENABLED_MODES,
     QMK_RGBMATRIX_GET_ACTIVE_MODE,
@@ -109,6 +110,7 @@ public:
 
     std::string GetQMKVersion();
     std::string GetDeviceName();
+    std::string GetDeviceVendor();
 
     std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes();
     unsigned int GetActiveMode();

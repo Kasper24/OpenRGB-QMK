@@ -252,6 +252,35 @@ std::string QMKRGBMatrixController::GetDeviceName()
     return name;
 }
 
+std::string QMKRGBMatrixController::GetDeviceVendor()
+{
+    unsigned char usb_buf[65];
+    /*-----------------------------------------------------*\
+    | Zero out buffer                                       |
+    \*-----------------------------------------------------*/
+    memset(usb_buf, 0x00, sizeof(usb_buf));
+
+    /*-----------------------------------------------------*\
+    | Set up config table request packet                    |
+    \*-----------------------------------------------------*/
+    usb_buf[0x00] = 0x00;
+    usb_buf[0x01] = QMK_RGBMATRIX_GET_DEVICE_VENDOR;
+
+    hid_write(dev, (unsigned char*)usb_buf, 65);
+    hid_read_timeout(dev, (unsigned char*)usb_buf, 65, 1000);
+
+    int i = 1;
+    std::string vendor;
+    while(usb_buf[i] != 0)
+    {
+        vendor.push_back(usb_buf[i]);
+        i++;
+    }
+
+    return vendor;
+}
+
+
 std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes()
 {
     unsigned char usb_buf[65];
