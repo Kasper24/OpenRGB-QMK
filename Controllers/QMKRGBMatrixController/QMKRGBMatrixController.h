@@ -16,35 +16,36 @@
 
 #pragma once
 
-enum CommandsId
-{
-    QMK_RGBMATRIX_SET_SINGLE_LED = 3,
-    QMK_RGBMATRIX_SET_LEDS,
 
-    QMK_RGBMATRIX_SET_MODE,
-    QMK_RGBMATRIX_SET_MODE_AND_SPEED,
-    QMK_RGBMATRIX_SET_COLOR_MODE_AND_SPEED,
+enum openrgb_command_id {
+    QMK_RGBMATRIX_DIRECT_MODE_SET_SINGLE_LED = 3,
+    QMK_RGBMATRIX_DIRECT_MODE_SET_LEDS,
+    QMK_RGBMATRIX_DIRECT_MODE_GET_LED_COLOR,
+
+    QMK_RGBMATRIX_QMK_MODE_SET_MODE_AND_SPEED,
+    QMK_RGBMATRIX_QMK_MODE_SET_COLOR_MODE_AND_SPEED,
+    QMK_RGBMATRIX_QMK_MODE_GET_COLOR,
 
     QMK_RGBMATRIX_GET_QMK_VERSION,
     QMK_RGBMATRIX_GET_DEVICE_NAME,
+
     QMK_RGBMATRIX_GET_ENABLED_MODES,
     QMK_RGBMATRIX_GET_ACTIVE_MODE,
+
     QMK_RGBMATRIX_GET_ZONES_COUNT,
     QMK_RGBMATRIX_GET_ZONE_NAME,
     QMK_RGBMATRIX_GET_ZONE_TYPE,
     QMK_RGBMATRIX_GET_ZONE_SIZE,
-    QMK_RGBMATRIX_GET_LED_NAME,
+
     QMK_RGBMATRIX_GET_LED_MATRIX_COLUMNS,
     QMK_RGBMATRIX_GET_LED_MATRIX_ROWS,
     QMK_RGBMATRIX_GET_LED_VALUE_IN_MATRIX,
-    QMK_RGBMATRIX_GET_LED_COLOR,
-    QMK_RGBMATRIX_GET_HSV
+    QMK_RGBMATRIX_GET_LED_NAME
 };
 
 enum ModeCommands
 {
-    QMK_RGBMATRIX_MODE_OPENRGB_DIRECT = 1,
-    QMK_RGBMATRIX_MODE_SOLID_COLOR,
+    QMK_RGBMATRIX_MODE_SOLID_COLOR = 1,
     QMK_RGBMATRIX_MODE_ALPHA_MOD,
     QMK_RGBMATRIX_MODE_GRADIENT_UP_DOWN,
     QMK_RGBMATRIX_MODE_GRADIENT_LEFT_RIGHT,
@@ -96,37 +97,36 @@ class QMKRGBMatrixController
 public:
     QMKRGBMatrixController(hid_device* dev_handle, const char* path);
     ~QMKRGBMatrixController();
-
-    void SetSingleLED(unsigned int led, unsigned char red, unsigned char green, unsigned char blue);
-    void SetLEDs(std::vector<RGBColor> colors, unsigned int num_colors);
-
-    void SetMode(unsigned char mode);
-    void SetModeAndSpeed(unsigned char mode, unsigned char speed);
-    void SetColorModeAndSpeed(hsv_t hsv_color, unsigned char mode, unsigned char speed);
-
     std::string GetLocation();
+
+    void DirectModeSetSingleLED(unsigned int led, unsigned char red, unsigned char green, unsigned char blue);
+    void DirectModeSetLEDs(std::vector<RGBColor> colors, unsigned int num_colors);
+    RGBColor DirectModeGetLEDColor(unsigned int led);
+
+    void QMKModeSetModeAndSpeed(unsigned char mode, unsigned char speed);
+    void QMKModeSetColorModeAndSpeed(hsv_t hsv_color, unsigned char mode, unsigned char speed);
+    unsigned int QMKModeGetColor();
 
     std::string GetQMKVersion();
     std::string GetDeviceName();
+
     std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes();
     unsigned int GetActiveMode();
+    
     unsigned int GetZonesCount();
     std::string GetZoneName(int zone);
     unsigned int GetZoneType(int zone);
     unsigned int GetZoneSize(int zone);
-    std::string GetLEDName(int led_column, int led_row);
     unsigned int GetLEDMatirxRows();
     unsigned int GetLEDMatirxColumns();
     unsigned int GetLEDValueInMatrix(int column, int row);
-    RGBColor GetLEDColor(unsigned int led);
-    unsigned int GetHSV();
-    
+    std::string GetLEDName(int led_column, int led_row);
 protected:
     hid_device* dev;
 private:
     std::string location;
 
-    std::map<uint8_t, std::string> QMKKeycodeToKeyName
+    std::map<uint8_t, std::string> QMKKeycodeToKeyNameMap
     {
         { 0, "" },
         { 1, "Right Fn" },
