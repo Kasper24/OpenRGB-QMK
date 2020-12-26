@@ -662,14 +662,15 @@ void RGBController_QMKRGBMatrix::ResizeZone(int /*zone*/, int /*new_size*/)
 
 void RGBController_QMKRGBMatrix::DeviceUpdateLEDs()
 {
-    // It's an hack to work around qmk not updating the pwm buffers as not enough time have elapsed since the last time
-    // the pwm buffers were updated - the delay is done inorder to prevent the keyboard from locking up.
-    // so to make sure enough time have elapsed, I'm sending 30 requests. 
-    // just for testing -this will be replaced by an actual solution asap
-    for(int i = 0; i < 30; i++)
-    {
-        qmk_rgb_matrix->DirectModeSetLEDs(colors, leds.size());
-    }
+    /* 
+        // There is an issue where you need to press 'Apply' multiple times in order for the colors to
+        // render correctly on the keyboard. This is because on direct mode I'm disabling the rgb_matrix code
+        // to workaround an issue where the keyboard locks up if ORGB sends more than 2 leds per update
+        // to prevent over-flushing the pwm buffer (which would lock up the keyboard as well), 
+        // there is a small delay, and if that delay hasn't elapsed yet then the pwm buffers will simply not flush
+        // making the keyboard leds not update untiil the next time you press apply  
+    */
+    qmk_rgb_matrix->DirectModeSetLEDs(colors, leds.size());
 }
 
 void RGBController_QMKRGBMatrix::UpdateZoneLEDs(int /*zone*/)
