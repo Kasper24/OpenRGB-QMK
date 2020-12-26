@@ -22,17 +22,14 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
 
     std::vector<unsigned int> enabled_modes = qmk_rgb_matrix_ptr->GetEnabledModes();
     unsigned int current_mode = 1;
-    unsigned int hsv = qmk_rgb_matrix_ptr->GetHSV();
+    unsigned int hsv = qmk_rgb_matrix_ptr->QMKModeGetColor();
 
-    if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_OPENRGB_DIRECT) != enabled_modes.end())
-    {
-        mode Direct;
-        Direct.name       = "Direct";
-        Direct.value      = current_mode++;
-        Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
-        Direct.color_mode = MODE_COLORS_PER_LED;
-        modes.push_back(Direct);
-    }
+    mode Direct;
+    Direct.name       = "Direct";
+    Direct.value      = 0;
+    Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
+    Direct.color_mode = MODE_COLORS_PER_LED;
+    modes.push_back(Direct);
 
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_SOLID_COLOR) != enabled_modes.end())
     {
@@ -652,7 +649,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
 
     for(unsigned int i = 0; i < leds.size(); i++)
     {
-        colors[i] = qmk_rgb_matrix->GetLEDColor(i);
+        colors[i] = qmk_rgb_matrix->DirectModeGetLEDColor(i);
     }
 }
 
@@ -665,7 +662,14 @@ void RGBController_QMKRGBMatrix::ResizeZone(int /*zone*/, int /*new_size*/)
 
 void RGBController_QMKRGBMatrix::DeviceUpdateLEDs()
 {
-    qmk_rgb_matrix->SetLEDs(colors, leds.size());
+    // It's an hack to work around qmk not updating the pwm buffers as not enough time have elapsed since the last time
+    // the pwm buffers were updated - the delay is done inorder to prevent the keyboard from locking up.
+    // so to make sure enough time have elapsed, I'm sending 30 requests. 
+    // just for testing -this will be replaced by an actual solution asap
+    for(int i = 0; i < 30; i++)
+    {
+        qmk_rgb_matrix->DirectModeSetLEDs(colors, leds.size());
+    }
 }
 
 void RGBController_QMKRGBMatrix::UpdateZoneLEDs(int /*zone*/)
@@ -679,7 +683,7 @@ void RGBController_QMKRGBMatrix::UpdateSingleLED(int led)
     unsigned char red   = RGBGetRValue(color);
     unsigned char grn   = RGBGetGValue(color);
     unsigned char blu   = RGBGetBValue(color);
-    qmk_rgb_matrix->SetSingleLED(led, red, grn, blu);
+    qmk_rgb_matrix->DirectModeSetSingleLED(led, red, grn, blu);
 }
 
 void RGBController_QMKRGBMatrix::SetCustomMode()
@@ -691,18 +695,18 @@ void RGBController_QMKRGBMatrix::DeviceUpdateMode()
 {
     if(modes[active_mode].color_mode == MODE_COLORS_PER_LED)
     {
-        qmk_rgb_matrix->SetMode(modes[active_mode].value);
+        DeviceUpdateLEDs();
     }
     else if(modes[active_mode].color_mode == MODE_COLORS_NONE)
     {
-        qmk_rgb_matrix->SetModeAndSpeed(modes[active_mode].value, modes[active_mode].speed);
+        qmk_rgb_matrix->QMKModeSetModeAndSpeed(modes[active_mode].value, modes[active_mode].speed);
     }
     else if(modes[active_mode].color_mode == MODE_COLORS_MODE_SPECIFIC)
     {
         RGBColor color = modes[active_mode].colors[0];
         hsv_t hsv_color;
         rgb2hsv(color, &hsv_color);
-        qmk_rgb_matrix->SetColorModeAndSpeed(hsv_color, modes[active_mode].value, modes[active_mode].speed);
+        qmk_rgb_matrix->QMKModeSetColorModeAndSpeed(hsv_color, modes[active_mode].value, modes[active_mode].speed);
     }
 }
 
