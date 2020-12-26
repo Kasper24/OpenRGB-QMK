@@ -68,18 +68,24 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_GRADIENT_UP_DOWN) != enabled_modes.end())
     {
         mode GradientUpDown;
-        GradientUpDown.name       = "Gradient Up Down";
-        GradientUpDown.value      = current_mode++;
-        GradientUpDown.flags      = 0;
+        GradientUpDown.name          = "Gradient Up Down";
+        GradientUpDown.value         = current_mode++;
+        GradientUpDown.flags         = MODE_FLAG_HAS_SPEED;
+        GradientUpDown.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+        GradientUpDown.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+        GradientUpDown.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
         modes.push_back(GradientUpDown);
     }
 
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_GRADIENT_LEFT_RIGHT) != enabled_modes.end())
     {
         mode GradientLeftRight;
-        GradientLeftRight.name       = "Gradient Left Right";
-        GradientLeftRight.value      = current_mode++;
-        GradientLeftRight.flags      = 0;
+        GradientLeftRight.name          = "Gradient Left Right";
+        GradientLeftRight.value         = current_mode++;
+        GradientLeftRight.flags         = MODE_FLAG_HAS_SPEED;
+        GradientLeftRight.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+        GradientLeftRight.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+        GradientLeftRight.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
         modes.push_back(GradientLeftRight);
     }
     
