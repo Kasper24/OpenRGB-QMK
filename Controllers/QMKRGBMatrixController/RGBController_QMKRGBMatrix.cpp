@@ -19,9 +19,10 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     type = DEVICE_TYPE_KEYBOARD;
     location = qmk_rgb_matrix_ptr->GetLocation();
     version = qmk_rgb_matrix_ptr->GetQMKVersion();
-    unsigned int hsv = qmk_rgb_matrix_ptr->GetHSV();
-    unsigned int current_mode = 1;
+
     std::vector<unsigned int> enabled_modes = qmk_rgb_matrix_ptr->GetEnabledModes();
+    unsigned int current_mode = 1;
+    unsigned int hsv = qmk_rgb_matrix_ptr->GetHSV();
 
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_OPENRGB_DIRECT) != enabled_modes.end())
     {
@@ -385,7 +386,6 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
         SolidReactiveSimple.colors[0] = hsv;
         modes.push_back(SolidReactiveSimple);
     }
-
 
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_SOLID_REACTIVE) != enabled_modes.end())
     {
