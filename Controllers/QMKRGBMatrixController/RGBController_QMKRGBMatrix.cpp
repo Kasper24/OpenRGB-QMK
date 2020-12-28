@@ -25,12 +25,15 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     unsigned int current_mode = 1;
     unsigned int hsv = qmk_rgb_matrix_ptr->QMKModeGetColor();
 
-    mode Direct;
-    Direct.name       = "Direct";
-    Direct.value      = 0;
-    Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
-    Direct.color_mode = MODE_COLORS_PER_LED;
-    modes.push_back(Direct);
+    if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_OPENRGB_DIRECT) != enabled_modes.end())
+    {
+        mode Direct;
+        Direct.name       = "Direct";
+        Direct.value      = current_mode++;
+        Direct.flags      = MODE_FLAG_HAS_PER_LED_COLOR;
+        Direct.color_mode = MODE_COLORS_PER_LED;
+        modes.push_back(Direct);
+    }
 
     if (std::find(enabled_modes.begin(), enabled_modes.end(), QMK_RGBMATRIX_MODE_SOLID_COLOR) != enabled_modes.end())
     {
@@ -570,7 +573,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
         modes.push_back(SolidMultiSplash);
     }
 
-    active_mode = qmk_rgb_matrix_ptr->GetActiveMode();
+    active_mode = qmk_rgb_matrix_ptr->GetActiveMode() - 1;
 
     SetupZones();
 }
@@ -663,14 +666,6 @@ void RGBController_QMKRGBMatrix::ResizeZone(int /*zone*/, int /*new_size*/)
 
 void RGBController_QMKRGBMatrix::DeviceUpdateLEDs()
 {
-    /* 
-        // There is an issue where you need to press 'Apply' multiple times in order for the colors to
-        // render correctly on the keyboard. This is because on direct mode I'm disabling the rgb_matrix code
-        // to workaround an issue where the keyboard locks up if ORGB sends more than 2 leds per update
-        // to prevent over-flushing the pwm buffer (which would lock up the keyboard as well), 
-        // there is a small delay, and if that delay hasn't elapsed yet then the pwm buffers will simply not flush
-        // making the keyboard leds not update untiil the next time you press apply  
-    */
     qmk_rgb_matrix->DirectModeSetLEDs(colors, leds.size());
 }
 

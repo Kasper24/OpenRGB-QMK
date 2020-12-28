@@ -59,7 +59,7 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 
     while(leds_sent < leds_count)
     {
-        unsigned int leds_to_send = 20;
+        unsigned int leds_to_send = 2;
 
         if((leds_count - leds_sent) < leds_to_send)
         {
@@ -279,7 +279,6 @@ std::string QMKRGBMatrixController::GetDeviceVendor()
 
     return vendor;
 }
-
 
 std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes()
 {
