@@ -293,7 +293,11 @@ void RGBController_QMKRGBMatrix::DeviceUpdateMode()
         RGBColor color = modes[active_mode].colors[0];
         hsv_t hsv_color;
         rgb2hsv(color, &hsv_color);
-        qmk_rgb_matrix->QMKModeSetColorModeAndSpeed(hsv_color, modes[active_mode].value, modes[active_mode].speed);
+
+        if(modes[active_mode].flags & MODE_FLAG_HAS_SPEED)    
+            qmk_rgb_matrix->QMKModeSetColorModeAndSpeed(hsv_color, modes[active_mode].value, modes[active_mode].speed);
+        else
+            qmk_rgb_matrix->QMKModeSetColorModeAndSpeed(hsv_color, modes[active_mode].value, 127);
     }
 }
 
