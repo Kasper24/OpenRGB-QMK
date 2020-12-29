@@ -28,4 +28,13 @@ public:
     void        DeviceUpdateMode();
 private:
     QMKRGBMatrixController* qmk_rgb_matrix;
+
+    void        InitializeMode
+                (  
+                std::string name, 
+                unsigned int &current_mode, 
+                unsigned int flags,
+                unsigned int color_mode,
+                unsigned int hsv
+                );
 };
