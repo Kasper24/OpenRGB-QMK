@@ -113,7 +113,7 @@ public:
     std::string GetDeviceName();
     std::string GetDeviceVendor();
 
-    std::vector<unsigned int> QMKRGBMatrixController::GetEnabledModes();
+    std::vector<unsigned int> GetEnabledModes();
     unsigned int GetActiveMode();
     
     unsigned int GetZonesCount();
