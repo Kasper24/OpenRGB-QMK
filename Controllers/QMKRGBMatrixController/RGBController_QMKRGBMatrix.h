@@ -1,9 +1,9 @@
 /*-------------------------------------------------------------------*\
-|  RGBController_QMKRGBMatrix.h                                       |
+|  QMKRGBMatrix.cpp                                              |
 |                                                                     |
-|  Driver for QMK keybaords using RGB Matrix                          |
+|  Driver for Massdrop Alt keyboard                             |
 |                                                                     |
-|  Kasper24         11th November 2020                                |
+|  Kasper         10th Octobber 2020                             |
 |                                                                     |
 \*-------------------------------------------------------------------*/
 
@@ -14,7 +14,7 @@
 class RGBController_QMKRGBMatrix : public RGBController
 {
 public:
-    RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version);
+    RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr);
     ~RGBController_QMKRGBMatrix();
 
     void        SetupZones();
@@ -27,14 +27,6 @@ public:
     void        SetCustomMode();
     void        DeviceUpdateMode();
 private:
+    int         pid;
     QMKRGBMatrixController* qmk_rgb_matrix;
-
-    void        InitializeMode
-                (  
-                std::string name, 
-                unsigned int &current_mode, 
-                unsigned int flags,
-                unsigned int color_mode,
-                unsigned int hsv
-                );
 };
