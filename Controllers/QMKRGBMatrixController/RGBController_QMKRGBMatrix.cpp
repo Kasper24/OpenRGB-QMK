@@ -10,7 +10,7 @@
 #include "hsv.h"
 #include "RGBController_QMKRGBMatrix.h"
 
-RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr)
+RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version)
 {
     qmk_rgb_matrix = qmk_rgb_matrix_ptr;
 
@@ -19,7 +19,7 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     description = "QMK RGB Matrix Device";
     type = DEVICE_TYPE_KEYBOARD;
     location = qmk_rgb_matrix_ptr->GetLocation();
-    version = qmk_rgb_matrix_ptr->GetQMKVersion();
+    version = std::to_string(protocol_version);
 
     std::vector<unsigned int> enabled_modes = qmk_rgb_matrix_ptr->GetEnabledModes();
     unsigned int current_mode = 1;

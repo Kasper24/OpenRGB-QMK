@@ -196,7 +196,7 @@ unsigned int QMKRGBMatrixController::QMKModeGetColor()
     return hsv2rgb(&hsv);
 }
 
-std::string QMKRGBMatrixController::GetQMKVersion()
+unsigned int QMKRGBMatrixController::GetProtocolVersion()
 {
     unsigned char usb_buf[65];
     /*-----------------------------------------------------*\
@@ -208,20 +208,12 @@ std::string QMKRGBMatrixController::GetQMKVersion()
     | Set up config table request packet                    |
     \*-----------------------------------------------------*/
     usb_buf[0x00] = 0x00;
-    usb_buf[0x01] = QMK_RGBMATRIX_GET_QMK_VERSION;
+    usb_buf[0x01] = QMK_RGBMATRIX_GET_PROTOCOL_VERSION;
 
     hid_write(dev, (unsigned char*)usb_buf, 65);
     hid_read_timeout(dev, (unsigned char*)usb_buf, 65, 1000);
 
-    int i = 1;
-    std::string name;
-    while(usb_buf[i] != 0)
-    {
-        name.push_back(usb_buf[i]);
-        i++;
-    }
-
-    return name;
+    return usb_buf[1];
 }
 
 std::string QMKRGBMatrixController::GetDeviceName()

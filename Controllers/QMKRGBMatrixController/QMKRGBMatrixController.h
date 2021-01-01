@@ -16,7 +16,6 @@
 
 #pragma once
 
-
 enum CommandsId {
     QMK_RGBMATRIX_DIRECT_MODE_SET_SINGLE_LED = 3,
     QMK_RGBMATRIX_DIRECT_MODE_SET_LEDS,
@@ -26,7 +25,7 @@ enum CommandsId {
     QMK_RGBMATRIX_QMK_MODE_SET_COLOR_MODE_AND_SPEED,
     QMK_RGBMATRIX_QMK_MODE_GET_COLOR,
 
-    QMK_RGBMATRIX_GET_QMK_VERSION,
+    QMK_RGBMATRIX_GET_PROTOCOL_VERSION,
     QMK_RGBMATRIX_GET_DEVICE_NAME,
     QMK_RGBMATRIX_GET_DEVICE_VENDOR,
 
@@ -109,7 +108,7 @@ public:
     void QMKModeSetColorModeAndSpeed(hsv_t hsv_color, unsigned char mode, unsigned char speed);
     unsigned int QMKModeGetColor();
 
-    std::string GetQMKVersion();
+    unsigned int GetProtocolVersion();
     std::string GetDeviceName();
     std::string GetDeviceVendor();
 
