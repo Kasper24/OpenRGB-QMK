@@ -111,6 +111,7 @@ INCLUDEPATH +=                                                                  
     Controllers/OpenRazerController/                                                            \
     Controllers/PatriotViperController/                                                         \
     Controllers/PhilipsWizController/                                                           \
+    Controllers/QMKRGBMatrixController/                                                         \
     Controllers/RazerController/                                                                \
     Controllers/RedragonController/                                                             \
     Controllers/RoccatController/                                                               \
@@ -314,6 +315,8 @@ HEADERS +=                                                                      
     Controllers/PatriotViperController/RGBController_PatriotViper.h                             \
     Controllers/PhilipsWizController/PhilipsWizController.h                                     \
     Controllers/PhilipsWizController/RGBController_PhilipsWiz.h                                 \
+    Controllers/QMKRGBMatrixController/RGBController_QMKRGBMatrix.h                             \
+    Controllers/QMKRGBMatrixController/QMKRGBMatrixController.h                                 \
     Controllers/RazerController/RazerController.h                                               \
     Controllers/RazerController/RazerKrakenController.h                                         \
     Controllers/RazerController/RazerDevices.h                                                  \
@@ -600,6 +603,9 @@ SOURCES +=                                                                      
     Controllers/PhilipsWizController/PhilipsWizController.cpp                                   \
     Controllers/PhilipsWizController/PhilipsWizControllerDetect.cpp                             \
     Controllers/PhilipsWizController/RGBController_PhilipsWiz.cpp                               \
+    Controllers/QMKRGBMatrixController/RGBController_QMKRGBMatrix.cpp                           \
+    Controllers/QMKRGBMatrixController/QMKRGBMatrixControllerDetect.cpp                         \
+    Controllers/QMKRGBMatrixController/QMKRGBMatrixController.cpp                               \
     Controllers/RazerController/RazerController.cpp                                             \
     Controllers/RazerController/RazerKrakenController.cpp                                       \
     Controllers/RazerController/RazerControllerDetect.cpp                                       \
