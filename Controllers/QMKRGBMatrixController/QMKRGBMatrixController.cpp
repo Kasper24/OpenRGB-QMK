@@ -116,7 +116,7 @@ unsigned int QMKRGBMatrixController::GetModeColor()
 
 std::vector<point_t> QMKRGBMatrixController::GetLEDPoints()
 {
-    return points_matrix;
+    return led_points;
 }
 
 std::vector<unsigned int> QMKRGBMatrixController::GetLEDFlags()
@@ -239,12 +239,15 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
     hid_write(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
-    points_matrix.push_back(point_t{usb_buf[1], usb_buf[2]});
+    led_points.push_back(point_t{usb_buf[1], usb_buf[2]});
     led_flags.push_back(usb_buf[3]);
 
     if(usb_buf[3] & 2)
+    {
         led_names.push_back("Underglow: " + std::to_string(led));
-    else if(usb_buf[4] != 0)
+        return;
+    }
+    if(usb_buf[4] != 0)
     {
         qDebug() << led << usb_buf[4] << QMKKeycodeToKeynameMap[usb_buf[4]].data();
         led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[4]]);

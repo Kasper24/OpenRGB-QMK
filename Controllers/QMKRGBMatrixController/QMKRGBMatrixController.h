@@ -162,7 +162,7 @@ private:
     unsigned int mode;
     unsigned int mode_speed;
     RGBColor mode_color;
-    std::vector<point_t> points_matrix;
+    std::vector<point_t> led_points;
     std::vector<unsigned int> led_flags;
     std::vector<std::string> led_names;
 };

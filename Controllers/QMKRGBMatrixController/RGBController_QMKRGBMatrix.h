@@ -12,6 +12,7 @@
 #include "RGBController.h"
 #include "QMKRGBMatrixController.h"
 #include <map>
+#include <set>
 
 class RGBController_QMKRGBMatrix : public RGBController
 {
@@ -37,6 +38,13 @@ private:
                 unsigned int &current_mode,
                 unsigned int flags,
                 unsigned int color_mode
+                );
+
+    unsigned int CalculateDivisor
+                (
+                std::vector<point_t> led_points,
+                std::set<int> rows,
+                std::set<int> columns
                 );
 
     void        GetInitialLEDColors();
