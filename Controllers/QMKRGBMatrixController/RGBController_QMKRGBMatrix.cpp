@@ -17,54 +17,7 @@
 #include <algorithm>
 #include <map>
 #include <cmath>
-
-static std::map<uint8_t, std::string> QMKKeycodeToKeynameMap
-{
-    { 0, "" }, { 1, "Right Fn" }, { 2, "" }, { 3, "" },
-    { 4, "A" }, { 5, "B" }, { 6, "C" }, { 7, "D" },
-    { 8, "E" }, { 9, "F" }, { 10, "G" }, { 11, "H" },
-    { 12, "I" }, { 13, "J" }, { 14, "K" }, { 15, "L" },
-    { 16, "M" }, { 17, "N" }, { 18, "O" }, { 19, "P" },
-    { 20, "Q" }, { 21, "R" }, { 22, "S" }, { 23, "T" },
-    { 24, "U" }, { 25, "V" }, { 26, "W" }, { 27, "X" },
-    { 28, "Y" }, { 29, "Z" }, { 30, "1" }, { 31, "2" },
-    { 32, "3" }, { 33, "4" }, { 34, "5" },{ 35, "6" },
-    { 36, "7" }, { 37, "8" }, { 38, "9" }, { 39, "0" },
-    { 40, "Enter" }, { 41, "Escape" }, { 42, "Backspace" }, { 43, "Tab" },
-    { 44, "Space" }, { 45, "-" }, { 46, "=" }, { 47, "[" },
-    { 48, "]" }, { 49, "\\ (ANSI)" }, { 50, "" }, { 51, ";" },
-    { 52, "'" }, { 53, "`" }, { 54, "," }, { 55, "." },
-    { 56, "/" }, { 57, "Caps Lock" }, { 58, "F1" }, { 59, "F2" },
-    { 60, "F3" }, { 61, "F4" }, { 62, "F5" }, { 63, "F6" },
-    { 64, "F7" }, { 65, "F8" }, { 66, "F9" }, { 67, "F10" },
-    { 68, "F11" }, { 69, "F12" }, { 70, "Print Screen" }, { 71, "Scroll Lock" },
-    { 72, "Pause/Break" }, { 73, "Insert" }, { 74, "Home" }, { 75, "Page Up" },
-    { 76, "Delete" }, { 77, "End" }, { 78, "Page Down" }, { 79, "Right Arrow" },
-    { 80, "Left Arrow" }, { 81, "Down Arrow" }, { 82, "Up Arrow" }, { 83, "Num Lock" },
-    { 84, "Number Pad /" }, { 85, "Number Pad *" }, { 86, "Number Pad -" }, { 87, "Number Pad +" },
-    { 88, "Number Pad Enter" }, { 89, "Number Pad 1" }, { 90, "Number Pad 2" }, { 91, "Number Pad 3" },
-    { 92, "Number Pad 4" }, { 93, "Number Pad 5" }, { 94, "Number Pad 6" }, { 95, "Number Pad 7" },
-    { 96, "Number Pad 8" }, { 97, "Number Pad 9" }, { 98, "Number Pad 0" }, { 99, "Number Pad ." },
-    { 100, "" }, { 101, "Menu" }, { 102, "" }, { 103, "" },
-    { 104, "" }, { 105, "" }, { 106, "" }, { 107, "" },
-    { 108, "" }, { 109, "" }, { 110, "" }, { 111, "" },
-    { 112, "" }, { 113, "" }, { 114, "" }, { 115, "" },
-    { 116, "" }, { 117, "" }, { 118, "" }, { 119, "" },
-    { 120, "" }, { 121, "" }, { 122, "" }, { 123, "" },
-    { 124, "" }, { 125, "" }, { 126, "" }, { 127, "" },
-    { 128, "" }, { 129, "" }, { 130, "" }, { 131, "" },
-    { 132, "" }, { 133, "" }, { 134, "" }, { 135, "" },
-    { 136, "" }, { 137, "" }, { 138, "" }, { 139, "" },
-    { 140, "" }, { 141, "" }, { 142, "" }, { 143, "" },
-    { 144, "" }, { 145, "" }, { 146, "" }, { 147, "" },
-    { 148, "" }, { 149, "" }, { 150, "" }, { 151, "" },
-    { 152, "" }, { 153, "" }, { 154, "" }, { 155, "" },
-    { 156, "" }, { 157, "" }, { 158, "" }, { 159, "" },
-    { 160, "" }, { 161, "" }, { 162, "" }, { 163, "" }, { 164, "" },
-    /*Space Cadet Left Shift*/ { 216, "Left Shift"}, /*Space Cadet Right Shift*/{ 217, "Right Shift"},
-    { 224, "Left Control" }, { 225, "Left Shift" }, { 226, "Left Alt" }, { 227, "Left Windows" },
-    { 228, "Right Control" }, { 229, "Right Shift" }, { 230, "Right Alt" }, { 231, "Right Windows" },
-};
+#include <QDebug>
 
 RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version)
 {
@@ -262,88 +215,37 @@ void RGBController_QMKRGBMatrix::InitializeMode
 
 void RGBController_QMKRGBMatrix::SetupZones()
 {
-    for(unsigned int i = 0; i < qmk_rgb_matrix->GetZonesCount(); i++)
-    {
-        qmk_rgb_matrix->GetZoneInfo(i);
+    zone keys_zone;
+    keys_zone.name = "Keys";
+    keys_zone.type = ZONE_TYPE_MATRIX;
+    keys_zone.leds_min = qmk_rgb_matrix->GetNumberOfKeyLEDs();
+    keys_zone.leds_max = keys_zone.leds_min;
+    keys_zone.leds_count = keys_zone.leds_min;
 
-        zone keyboard_zone;
-        keyboard_zone.name = qmk_rgb_matrix->GetCurrentZoneName();
-        keyboard_zone.type = qmk_rgb_matrix->GetCurrentZoneType();
-        keyboard_zone.leds_min = qmk_rgb_matrix->GetCurrentZoneSize();
-        keyboard_zone.leds_max = keyboard_zone.leds_min;
-        keyboard_zone.leds_count = keyboard_zone.leds_min;
-
-        std::vector<std::string> led_names;
-        if(keyboard_zone.type == ZONE_TYPE_MATRIX)
-            SetupMatrix(keyboard_zone, led_names);
-        else
-            keyboard_zone.matrix_map = NULL;
-
-        zones.push_back(keyboard_zone);
-        SetupLEDs(led_names, i, keyboard_zone.leds_count);
-    }
-
-    SetupColors();
-    GetInitialLEDColors();
-}
-
-void RGBController_QMKRGBMatrix::SetupMatrix(zone &keyboard_zone, std::vector<std::string> &led_names)
-{
-    // unsigned int led_matrix_columns = qmk_rgb_matrix->GetLEDMatirxColumns();
-    // unsigned int led_matrix_rows = qmk_rgb_matrix->GetLEDMatirxRows();
-
-    // keyboard_zone.matrix_map = new matrix_map_type;
-    // keyboard_zone.matrix_map->height = led_matrix_rows;
-    // keyboard_zone.matrix_map->width = led_matrix_columns;
-
-    // unsigned int* matrix_map = new unsigned int[led_matrix_rows * led_matrix_columns];
-    // for(unsigned int x = 0; x < led_matrix_rows; x++)
-    // {
-    //     for(unsigned int y = 0; y < led_matrix_columns; y++)
-    //     {
-    //         unsigned int led_value = qmk_rgb_matrix->GetLEDValueInMatrix(y, x);
-    //         if(led_value != 255)
-    //         {
-    //             unsigned int keycode = qmk_rgb_matrix->GetLEDName(y, x);
-    //             if(keycode != 255)
-    //             {
-    //                 led_names.push_back(QMKKeycodeToKeynameMap[keycode]);
-    //             }
-    //         }
-    //         else
-    //         {
-    //             led_value = 0xFFFFFFFF;
-    //         }
-    //         matrix_map[led_matrix_columns * x + y] = led_value;
-    //     }
-    // }
-
-    // keyboard_zone.matrix_map->map = matrix_map;
-
-    unsigned int number_of_leds = qmk_rgb_matrix->GetNumberOfLEDs();
-
-
+    unsigned int number_of_leds = qmk_rgb_matrix->GetNumberOfKeyLEDs() + qmk_rgb_matrix->GetNumberOfUnderglowLEDs();
     for (int i = 0; i< number_of_leds; i++)
     {
-        qmk_rgb_matrix->GetLEDValueInMatrix(i);
+        qmk_rgb_matrix->GetLEDInfo(i);
     }
 
-    std::vector<point_t> points_matrix = qmk_rgb_matrix->GetPointMatrix();
+    std::vector<point_t> led_points = qmk_rgb_matrix->GetLEDPoints();
+    std::vector<unsigned int> led_flags = qmk_rgb_matrix->GetLEDFlags();
+    std::vector<std::string> led_names = qmk_rgb_matrix->GetLEDNames();
 
     std::set<int> rows;
     for (int i = 0; i< number_of_leds; i++)
     {
-        rows.insert(points_matrix[i].y);
+        rows.insert(led_points[i].y);
     }
 
     std::set<int> columns;
     for (int i = 0; i<number_of_leds; i++)
     {
-        columns.insert(points_matrix[i].x);
+        columns.insert(led_points[i].x);
     }
 
     std::vector<std::vector<point_t>> row_points(rows.size());
-    for (const auto &pt : points_matrix)
+    for (const auto &pt : led_points)
     {
         for (const auto &i : rows)
         {
@@ -380,86 +282,129 @@ void RGBController_QMKRGBMatrix::SetupMatrix(zone &keyboard_zone, std::vector<st
     }
 
     unsigned int matrix_map_xl[rows.size()][columns.size()];
+    unsigned int underglow_map_xl[rows.size()][columns.size()];
     for (int i = 0; i < rows.size(); i++)
     {
         for (int j = 0; j < columns.size(); j++)
         {
             matrix_map_xl[i][j] = 255;
+            underglow_map_xl[i][j] = 255;
         }
     }
-    int x, y;
 
+    int x, y;
     for (int i = 0; i < number_of_leds; i++)
     {
-        if (points_matrix[i].x != 255 && points_matrix[i].y != 255)
+        if (led_points[i].x != 255 && led_points[i].y != 255)
         {
-            x = std::round(points_matrix[i].x/divisor);
-            y = std::distance(rows.begin(), rows.find(points_matrix[i].y));
-            while (matrix_map_xl[y][x] != 255)
+            bool underglow = led_flags[i] & 2;
+            x = std::round(led_points[i].x/divisor);
+            y = std::distance(rows.begin(), rows.find(led_points[i].y));
+            if (!underglow)
             {
-                x++;
+                while (matrix_map_xl[y][x] != 255)
+                {
+                    x++;
+                }
+                matrix_map_xl[y][x] = i;
             }
-            matrix_map_xl[y][x] = i;
+            else
+            {
+                while (underglow_map_xl[y][x] != 255)
+                {
+                    x++;
+                }
+                underglow_map_xl[y][x] = i;
+            }
         }
     }
+
+    bool empty_col = true;
+    bool empty_col_udg = true;
+    bool empty_row = true;
     int width = 0;
-    for (const auto &row : matrix_map_xl)
+    int width_udg = 0;
+    std::vector<int> empty_rows;
+    bool can_break;
+    for (int i = 0; i < rows.size(); i++)
     {
-        for (std::size_t i = (sizeof row / sizeof *row) - 1; i --> 0; )
+        empty_row = true;
+        for (std::size_t j = (sizeof matrix_map_xl[i] / sizeof *matrix_map_xl[i]) - 1; j --> 0; )
         {
-            if (row[i] != 255 && width < (i + 1))
+            can_break = false;
+            if (matrix_map_xl[i][j] != 255 && width < (j + 1))
             {
-                width = i + 1;
-                break;
+                width = j + 1;
+                can_break = true;
+                empty_row = false;
             }
+            else if (matrix_map_xl[i][j] != 255) empty_row = false;
+            if (underglow_map_xl[i][j] != 255 && width_udg < (j + 1))
+            {
+                width_udg = j + 1;
+                if (can_break) break;
+            }
+
         }
+        if (matrix_map_xl[i][0] != 255) empty_col = false;
+        if (underglow_map_xl[i][0] != 255) empty_col_udg = false;
+        if (empty_row) empty_rows.push_back(i);
     }
 
-    unsigned int matrix_map[rows.size()][width];
-
+    unsigned int* matrix_map = new unsigned int[(rows.size() - empty_rows.size()) *(empty_col ? width - 1 : width)];
+    unsigned int* underglow_map = new unsigned int[rows.size() * (empty_col_udg ? width_udg - 1 : width_udg)];
+    int s = 0;
+    for (int i = 0; i < rows.size(); i++)
+    {
+        if (std::find(empty_rows.begin(), empty_rows.end(), i) != empty_rows.end())
+        {
+            s++;
+            continue;
+        }
+        for (int j = 0; j < width; j++)
+        {
+            matrix_map[(empty_col ? width - 1 : width) * (i - s) + j] = matrix_map_xl[i][j];;
+        }
+    }
     for (int i = 0; i < rows.size(); i++)
     {
         for (int j = 0; j < width; j++)
         {
-            matrix_map[i][j] = matrix_map_xl[i][j];
+            underglow_map[(empty_col_udg ? width_udg - 1 : width_udg) * i + j] = underglow_map_xl[i][j];;
         }
     }
-    for (const auto &i : matrix_map)
-    {
-        for (const auto &j : i)
-        {
-            if (j != 255)
-            {
-                std::cout << j;
-            }
-            std::cout << "\t";
-        }
-        std::cout << std::endl;
-    }
-}
 
-void RGBController_QMKRGBMatrix::SetupLEDs
-    (
-    std::vector<std::string> &led_names,
-    unsigned int zone_idx,
-    unsigned int zone_led_count
-    )
-{
-    for(unsigned int led_idx = 0; led_idx < zone_led_count; led_idx++)
-    {
-        led keyboard_led;
-        if(leds.size() < led_names.size())
-        {
-            if(led_idx < led_names.size())
-                keyboard_led.name = "Key: " + led_names[led_idx];
-        }
-        else
-        {
-            keyboard_led.name = zones[zone_idx].name + ": " + std::to_string(led_idx);
-        }
+    keys_zone.matrix_map = new matrix_map_type;
+    keys_zone.matrix_map->height = rows.size() - empty_rows.size();
+    keys_zone.matrix_map->width = empty_col ? width - 1 : width;
+    keys_zone.matrix_map->map = matrix_map;
+    zones.push_back(keys_zone);
 
-        leds.push_back(keyboard_led);
+    unsigned int underglow_leds_count = qmk_rgb_matrix->GetNumberOfUnderglowLEDs();
+    if(underglow_leds_count > 0)
+    {
+        zone underglow_zone;
+        underglow_zone.name = "Underglow";
+        underglow_zone.type = ZONE_TYPE_MATRIX;
+        underglow_zone.leds_min = underglow_leds_count;
+        underglow_zone.leds_max = underglow_zone.leds_min;
+        underglow_zone.leds_count = underglow_zone.leds_min;
+        underglow_zone.matrix_map = new matrix_map_type;
+        underglow_zone.matrix_map->height = rows.size();
+        underglow_zone.matrix_map->width = empty_col_udg ? width_udg - 1 : width_udg;
+        underglow_zone.matrix_map->map = underglow_map;
+        zones.push_back(underglow_zone);
     }
+
+    for(unsigned int led_idx = 0; led_idx < number_of_leds; led_idx++)
+    {
+         led keyboard_led;
+         keyboard_led.name = led_names[led_idx];
+         leds.push_back(keyboard_led);
+    }
+
+    SetupColors();
+    // GetInitialLEDColors();
 }
 
 void RGBController_QMKRGBMatrix::GetInitialLEDColors()

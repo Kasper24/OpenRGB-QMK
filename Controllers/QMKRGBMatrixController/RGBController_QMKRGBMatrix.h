@@ -39,12 +39,5 @@ private:
                 unsigned int color_mode
                 );
 
-    void        SetupMatrix(zone &keyboard_zone, std::vector<std::string> &led_names);
-    void        SetupLEDs
-                (
-                std::vector<std::string> &led_names,
-                unsigned int zone_idx,
-                unsigned int zone_led_count
-                );
     void        GetInitialLEDColors();
 };

@@ -21,10 +21,7 @@ enum CommandsId
     QMK_RGBMATRIX_GET_PROTOCOL_VERSION = 1,
     QMK_RGBMATRIX_GET_DEVICE_INFO,
     QMK_RGBMATRIX_GET_MODE_INFO,
-    QMK_RGBMATRIX_GET_ZONE_INFO,
-    QMK_RGBMATRIX_GET_LED_MATRIX_INFO,
-    QMK_RGBMATRIX_GET_LED_VALUE_IN_MATRIX,
-    QMK_RGBMATRIX_GET_LED_NAME,
+    QMK_RGBMATRIX_GET_LED_INFO,
     QMK_RGBMATRIX_GET_IS_MODE_ENABLED,
     QMK_RGBMATRIX_GET_DIRECT_MODE_LED_COLOR,
 
@@ -33,7 +30,7 @@ enum CommandsId
     QMK_RGBMATRIX_DIRECT_MODE_SET_LEDS,
 };
 
-enum ModeCommands
+enum Modes
 {
     QMK_RGBMATRIX_MODE_OPENRGB_DIRECT = 1,
     QMK_RGBMATRIX_MODE_SOLID_COLOR,
@@ -101,8 +98,8 @@ enum
 
 enum
 {
-    QMK_RGBMATRIX_ZONE_COUNT_BYTE = 1,
-    QMK_RGBMATRIX_NUMBER_OF_LEDS_BYTE = 2
+    QMK_RGBMATRIX_NUMBER_OF_KEY_LEDS_BYTE = 1,
+    QMK_RGBMATRIX_NUMBER_OF_UNEDRGLOW_LEDS_BYTE = 2
 };
 
 enum
@@ -132,25 +129,19 @@ public:
     std::string GetLocation();
     std::string GetDeviceName();
     std::string GetDeviceVendor();
-    unsigned int GetNumberOfLEDs();
+    unsigned int GetNumberOfKeyLEDs();
+    unsigned int GetNumberOfUnderglowLEDs();
     unsigned int GetMode();
     unsigned int GetModeSpeed();
     unsigned int GetModeColor();
-    unsigned int GetZonesCount();
-    std::string GetCurrentZoneName();
-    unsigned int GetCurrentZoneType();
-    unsigned int GetCurrentZoneSize();
-    unsigned int GetLEDMatirxRows();
-    unsigned int GetLEDMatirxColumns();
-    std::vector<point_t> GetPointMatrix();
+    std::vector<point_t> GetLEDPoints();
+    std::vector<unsigned int> GetLEDFlags();
+    std::vector<std::string> GetLEDNames();
 
     unsigned int GetProtocolVersion();
     void GetDeviceInfo();
     void GetModeInfo();
-    void GetZoneInfo(unsigned int zone);
-    void GetLEDMatrixInfo();
-    void GetLEDValueInMatrix(unsigned int point);
-    unsigned int GetLEDName(unsigned int led_column, unsigned int led_row);
+    void GetLEDInfo(unsigned int led);
     bool GetIsModeEnabled(unsigned int mode);
     RGBColor GetDirectModeLEDColor(unsigned int led);
 
@@ -166,15 +157,12 @@ private:
 
     std::string device_name;
     std::string device_vendor;
-    unsigned int number_of_leds;
+    unsigned int number_of_key_leds;
+    unsigned int number_of_underglow_leds;
     unsigned int mode;
     unsigned int mode_speed;
     RGBColor mode_color;
-    unsigned int zones_count;
-    std::string current_zone_name;
-    unsigned int current_zone_type;
-    unsigned int current_zone_size;
-    unsigned int led_matrix_rows;
-    unsigned int led_matrix_columns;
     std::vector<point_t> points_matrix;
+    std::vector<unsigned int> led_flags;
+    std::vector<std::string> led_names;
 };
