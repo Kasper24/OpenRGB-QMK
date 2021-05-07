@@ -101,7 +101,8 @@ enum
 
 enum
 {
-    QMK_RGBMATRIX_ZONE_COUNT_BYTE = 1
+    QMK_RGBMATRIX_ZONE_COUNT_BYTE = 1,
+    QMK_RGBMATRIX_NUMBER_OF_LEDS_BYTE = 2
 };
 
 enum
@@ -116,6 +117,12 @@ enum
     QMK_RGBMATRIX_LED_MATRIX_ROWS_COUNT_BYTE = 2
 };
 
+typedef struct
+{
+    uint8_t x;
+    uint8_t y;
+} point_t;
+
 class QMKRGBMatrixController
 {
 public:
@@ -125,6 +132,7 @@ public:
     std::string GetLocation();
     std::string GetDeviceName();
     std::string GetDeviceVendor();
+    unsigned int GetNumberOfLEDs();
     unsigned int GetMode();
     unsigned int GetModeSpeed();
     unsigned int GetModeColor();
@@ -134,13 +142,14 @@ public:
     unsigned int GetCurrentZoneSize();
     unsigned int GetLEDMatirxRows();
     unsigned int GetLEDMatirxColumns();
+    std::vector<point_t> GetPointMatrix();
 
     unsigned int GetProtocolVersion();
     void GetDeviceInfo();
     void GetModeInfo();
     void GetZoneInfo(unsigned int zone);
     void GetLEDMatrixInfo();
-    unsigned int GetLEDValueInMatrix(unsigned int column, unsigned int row);
+    void GetLEDValueInMatrix(unsigned int point);
     unsigned int GetLEDName(unsigned int led_column, unsigned int led_row);
     bool GetIsModeEnabled(unsigned int mode);
     RGBColor GetDirectModeLEDColor(unsigned int led);
@@ -157,6 +166,7 @@ private:
 
     std::string device_name;
     std::string device_vendor;
+    unsigned int number_of_leds;
     unsigned int mode;
     unsigned int mode_speed;
     RGBColor mode_color;
@@ -166,4 +176,5 @@ private:
     unsigned int current_zone_size;
     unsigned int led_matrix_rows;
     unsigned int led_matrix_columns;
+    std::vector<point_t> points_matrix;
 };

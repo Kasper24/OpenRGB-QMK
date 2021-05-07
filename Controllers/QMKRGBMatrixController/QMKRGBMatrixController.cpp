@@ -40,6 +40,11 @@ std::string QMKRGBMatrixController::GetDeviceVendor()
     return device_vendor;
 }
 
+unsigned int QMKRGBMatrixController::GetNumberOfLEDs()
+{
+    return number_of_leds;
+}
+
 unsigned int QMKRGBMatrixController::GetMode()
 {
     return mode;
@@ -85,6 +90,11 @@ unsigned int QMKRGBMatrixController::GetLEDMatirxColumns()
     return led_matrix_columns;
 }
 
+std::vector<point_t> QMKRGBMatrixController::GetPointMatrix()
+{
+    return points_matrix;
+}
+
 unsigned int QMKRGBMatrixController::GetProtocolVersion()
 {
     unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
@@ -125,8 +135,9 @@ void QMKRGBMatrixController::GetDeviceInfo()
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
     zones_count = usb_buf[QMK_RGBMATRIX_ZONE_COUNT_BYTE];
+    number_of_leds = usb_buf[QMK_RGBMATRIX_NUMBER_OF_LEDS_BYTE];
 
-    int i = QMK_RGBMATRIX_ZONE_COUNT_BYTE + 1;
+    int i = QMK_RGBMATRIX_NUMBER_OF_LEDS_BYTE + 1;
     while (usb_buf[i] != 0)
     {
         device_name.push_back(usb_buf[i]);
@@ -226,7 +237,7 @@ void QMKRGBMatrixController::GetLEDMatrixInfo()
     led_matrix_rows = usb_buf[QMK_RGBMATRIX_LED_MATRIX_ROWS_COUNT_BYTE];
 }
 
-unsigned int QMKRGBMatrixController::GetLEDValueInMatrix(unsigned int column, unsigned int row)
+void QMKRGBMatrixController::GetLEDValueInMatrix(unsigned int point)
 {
     unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
 
@@ -240,13 +251,12 @@ unsigned int QMKRGBMatrixController::GetLEDValueInMatrix(unsigned int column, un
     \*-----------------------------------------------------*/
     usb_buf[0x00] = 0x00;
     usb_buf[0x01] = QMK_RGBMATRIX_GET_LED_VALUE_IN_MATRIX;
-    usb_buf[0x02] = column;
-    usb_buf[0x03] = row;
+    usb_buf[0x02] = point;
 
     hid_write(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
-    return usb_buf[1];
+    points_matrix.push_back(point_t{usb_buf[1], usb_buf[2]});
 }
 
 unsigned int QMKRGBMatrixController::GetLEDName(unsigned int led_column, unsigned int led_row)

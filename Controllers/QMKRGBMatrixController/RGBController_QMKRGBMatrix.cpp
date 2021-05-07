@@ -10,6 +10,14 @@
 #include "hsv.h"
 #include "RGBController_QMKRGBMatrix.h"
 
+#include <iostream>
+#include <set>
+#include <vector>
+#include <iterator>
+#include <algorithm>
+#include <map>
+#include <cmath>
+
 static std::map<uint8_t, std::string> QMKKeycodeToKeynameMap
 {
     { 0, "" }, { 1, "Right Fn" }, { 2, "" }, { 3, "" },
@@ -281,36 +289,153 @@ void RGBController_QMKRGBMatrix::SetupZones()
 
 void RGBController_QMKRGBMatrix::SetupMatrix(zone &keyboard_zone, std::vector<std::string> &led_names)
 {
-    unsigned int led_matrix_columns = qmk_rgb_matrix->GetLEDMatirxColumns();
-    unsigned int led_matrix_rows = qmk_rgb_matrix->GetLEDMatirxRows();
+    // unsigned int led_matrix_columns = qmk_rgb_matrix->GetLEDMatirxColumns();
+    // unsigned int led_matrix_rows = qmk_rgb_matrix->GetLEDMatirxRows();
 
-    keyboard_zone.matrix_map = new matrix_map_type;
-    keyboard_zone.matrix_map->height = led_matrix_rows;
-    keyboard_zone.matrix_map->width = led_matrix_columns;
+    // keyboard_zone.matrix_map = new matrix_map_type;
+    // keyboard_zone.matrix_map->height = led_matrix_rows;
+    // keyboard_zone.matrix_map->width = led_matrix_columns;
 
-    unsigned int* matrix_map = new unsigned int[led_matrix_rows * led_matrix_columns];
-    for(unsigned int x = 0; x < led_matrix_rows; x++)
+    // unsigned int* matrix_map = new unsigned int[led_matrix_rows * led_matrix_columns];
+    // for(unsigned int x = 0; x < led_matrix_rows; x++)
+    // {
+    //     for(unsigned int y = 0; y < led_matrix_columns; y++)
+    //     {
+    //         unsigned int led_value = qmk_rgb_matrix->GetLEDValueInMatrix(y, x);
+    //         if(led_value != 255)
+    //         {
+    //             unsigned int keycode = qmk_rgb_matrix->GetLEDName(y, x);
+    //             if(keycode != 255)
+    //             {
+    //                 led_names.push_back(QMKKeycodeToKeynameMap[keycode]);
+    //             }
+    //         }
+    //         else
+    //         {
+    //             led_value = 0xFFFFFFFF;
+    //         }
+    //         matrix_map[led_matrix_columns * x + y] = led_value;
+    //     }
+    // }
+
+    // keyboard_zone.matrix_map->map = matrix_map;
+
+    unsigned int number_of_leds = qmk_rgb_matrix->GetNumberOfLEDs();
+
+
+    for (int i = 0; i< number_of_leds; i++)
     {
-        for(unsigned int y = 0; y < led_matrix_columns; y++)
+        qmk_rgb_matrix->GetLEDValueInMatrix(i);
+    }
+
+    std::vector<point_t> points_matrix = qmk_rgb_matrix->GetPointMatrix();
+
+    std::set<int> rows;
+    for (int i = 0; i< number_of_leds; i++)
+    {
+        rows.insert(points_matrix[i].y);
+    }
+
+    std::set<int> columns;
+    for (int i = 0; i<number_of_leds; i++)
+    {
+        columns.insert(points_matrix[i].x);
+    }
+
+    std::vector<std::vector<point_t>> row_points(rows.size());
+    for (const auto &pt : points_matrix)
+    {
+        for (const auto &i : rows)
         {
-            unsigned int led_value = qmk_rgb_matrix->GetLEDValueInMatrix(y, x);
-            if(led_value != 255)
+            if (pt.y == i)
             {
-                unsigned int keycode = qmk_rgb_matrix->GetLEDName(y, x);
-                if(keycode != 255)
-                {
-                    led_names.push_back(QMKKeycodeToKeynameMap[keycode]);
-                }
+                row_points[std::distance(rows.begin(), rows.find(i))].push_back(pt);
             }
-            else
-            {
-                led_value = 0xFFFFFFFF;
-            }
-            matrix_map[led_matrix_columns * x + y] = led_value;
         }
     }
 
-    keyboard_zone.matrix_map->map = matrix_map;
+    int last_pos;
+    std::vector<int> distances;
+    for (const auto &row : row_points)
+    {
+        last_pos = 0;
+        std::for_each(row.begin(), row.end(), [&distances, &last_pos](const point_t &pt)
+        {
+            distances.push_back(pt.x - last_pos);
+            last_pos = pt.x;
+        });
+    }
+    std::map<int, int> counts;
+    for (const auto &i : distances)
+    {
+        counts[i]++;
+    }
+    int divisor = distances[0];
+    for (const auto &i : counts)
+    {
+        if (counts[divisor] < i.second)
+        {
+            divisor = i.first;
+        }
+    }
+
+    unsigned int matrix_map_xl[rows.size()][columns.size()];
+    for (int i = 0; i < rows.size(); i++)
+    {
+        for (int j = 0; j < columns.size(); j++)
+        {
+            matrix_map_xl[i][j] = 255;
+        }
+    }
+    int x, y;
+
+    for (int i = 0; i < number_of_leds; i++)
+    {
+        if (points_matrix[i].x != 255 && points_matrix[i].y != 255)
+        {
+            x = std::round(points_matrix[i].x/divisor);
+            y = std::distance(rows.begin(), rows.find(points_matrix[i].y));
+            while (matrix_map_xl[y][x] != 255)
+            {
+                x++;
+            }
+            matrix_map_xl[y][x] = i;
+        }
+    }
+    int width = 0;
+    for (const auto &row : matrix_map_xl)
+    {
+        for (std::size_t i = (sizeof row / sizeof *row) - 1; i --> 0; )
+        {
+            if (row[i] != 255 && width < (i + 1))
+            {
+                width = i + 1;
+                break;
+            }
+        }
+    }
+
+    unsigned int matrix_map[rows.size()][width];
+
+    for (int i = 0; i < rows.size(); i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            matrix_map[i][j] = matrix_map_xl[i][j];
+        }
+    }
+    for (const auto &i : matrix_map)
+    {
+        for (const auto &j : i)
+        {
+            if (j != 255)
+            {
+                std::cout << j;
+            }
+            std::cout << "\t";
+        }
+        std::cout << std::endl;
+    }
 }
 
 void RGBController_QMKRGBMatrix::SetupLEDs
