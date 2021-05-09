@@ -99,6 +99,11 @@ unsigned int QMKRGBMatrixController::GetNumberOfUnderglowLEDs()
     return number_of_underglow_leds;
 }
 
+unsigned int QMKRGBMatrixController::GetTotalNumberOfLEDs()
+{
+    return total_number_of_leds;
+}
+
 unsigned int QMKRGBMatrixController::GetMode()
 {
     return mode;
@@ -128,6 +133,12 @@ std::vector<std::string> QMKRGBMatrixController::GetLEDNames()
 {
     return led_names;
 }
+
+void QMKRGBMatrixController::SetIdxConversionMap(unsigned int* idx_conversion)
+{
+    openrgb_idx_to_qmk_idx = idx_conversion;
+}
+
 
 unsigned int QMKRGBMatrixController::GetProtocolVersion()
 {
@@ -170,8 +181,9 @@ void QMKRGBMatrixController::GetDeviceInfo()
 
     number_of_key_leds = usb_buf[QMK_RGBMATRIX_NUMBER_OF_KEY_LEDS_BYTE];
     number_of_underglow_leds = usb_buf[QMK_RGBMATRIX_NUMBER_OF_UNEDRGLOW_LEDS_BYTE];
+    total_number_of_leds = usb_buf[QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE];
 
-    int i = QMK_RGBMATRIX_NUMBER_OF_UNEDRGLOW_LEDS_BYTE + 1;
+    int i = QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE + 1;
     while (usb_buf[i] != 0)
     {
         device_name.push_back(usb_buf[i]);
@@ -245,12 +257,18 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
     if(usb_buf[3] & 2)
     {
         led_names.push_back("Underglow: " + std::to_string(led));
-        return;
     }
-    if(usb_buf[4] != 0)
+    else if(usb_buf[4] != 0)
     {
-        qDebug() << led << usb_buf[4] << QMKKeycodeToKeynameMap[usb_buf[4]].data();
-        led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[4]]);
+        if (QMKKeycodeToKeynameMap.count(usb_buf[4]) > 0)
+        {
+            // qDebug() << led << usb_buf[4] << QMKKeycodeToKeynameMap[usb_buf[4]].data();
+            led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[4]]);
+        }
+        else
+        {
+            led_names.push_back("Key: ");
+        }
     }
 }
 
@@ -290,7 +308,7 @@ RGBColor QMKRGBMatrixController::GetDirectModeLEDColor(unsigned int led)
     \*-----------------------------------------------------*/
     usb_buf[0x00] = 0x00;
     usb_buf[0x01] = QMK_RGBMATRIX_GET_DIRECT_MODE_LED_COLOR;
-    usb_buf[0x02] = led;
+    usb_buf[0x02] = openrgb_idx_to_qmk_idx[led];
 
     hid_write(dev, usb_buf, 65);
     hid_read(dev, usb_buf, 65);
@@ -340,7 +358,7 @@ void QMKRGBMatrixController::DirectModeSetSingleLED(unsigned int led, unsigned c
 
     usb_buf[0x00] = 0x00;
     usb_buf[0x01] = QMK_RGBMATRIX_DIRECT_MODE_SET_SINGLE_LED;
-    usb_buf[0x02] = led;
+    usb_buf[0x02] = openrgb_idx_to_qmk_idx[led];
     usb_buf[0x03] = red;
     usb_buf[0x04] = green;
     usb_buf[0x05] = blue;
@@ -356,6 +374,8 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 {
     unsigned int leds_sent = 0;
     unsigned int leds_per_update = 20;
+
+    colors = AddEmptyLEDs(colors);
 
     while (leds_sent < leds_count)
     {
@@ -390,4 +410,17 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 
         leds_sent += leds_per_update;
     }
+}
+
+std::vector<RGBColor> QMKRGBMatrixController::AddEmptyLEDs(std::vector<RGBColor> colors)
+{
+    std::vector<RGBColor> new_colors;
+    for (int i; i < GetTotalNumberOfLEDs(); i++) {
+        new_colors.push_back((0, 0, 0));
+    }
+    for (int color_idx = 0; color_idx < colors.size(); color_idx++)
+    {
+        new_colors[openrgb_idx_to_qmk_idx[color_idx]] = colors[color_idx];
+    }
+    return new_colors;
 }
