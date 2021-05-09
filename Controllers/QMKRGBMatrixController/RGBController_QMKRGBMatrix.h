@@ -32,20 +32,25 @@ public:
 private:
     QMKRGBMatrixController* qmk_rgb_matrix;
 
-    void        InitializeMode
-                (
-                std::string name,
-                unsigned int &current_mode,
-                unsigned int flags,
-                unsigned int color_mode
-                );
+    void            InitializeMode
+                    (
+                    std::string name,
+                    unsigned int &current_mode,
+                    unsigned int flags,
+                    unsigned int color_mode
+                    );
 
-    unsigned int CalculateDivisor
-                (
-                std::vector<point_t> led_points,
-                std::set<int> rows,
-                std::set<int> columns
-                );
+    unsigned int    CalculateDivisor
+                    (
+                    std::vector<point_t> led_points,
+                    std::set<int> rows,
+                    std::set<int> columns
+                    );
 
-    void        GetInitialLEDColors();
+    void            GetInitialLEDColors();
+
+    unsigned int*   OpenRGBIdxToQMKIdx
+                    (
+                    std::vector<point_t> led_points
+                    );
 };
