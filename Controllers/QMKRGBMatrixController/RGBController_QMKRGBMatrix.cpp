@@ -258,7 +258,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
     }
 
     int x, y;
-    for (int i = 0; i < number_of_leds; i++)
+    for (int i = 0; i < total_number_of_leds; i++)
     {
         if (led_points[i].x != NO_LED && led_points[i].y != NO_LED)
         {
@@ -370,6 +370,8 @@ void RGBController_QMKRGBMatrix::SetupZones()
     }
     qDebug() << "Finished listing leds";
 
+    qDebug() << "# of led names: " << led_names.size() << number_of_leds;
+
     // leds.resize(number_of_leds);
     for(int led_idx = 0; led_idx < number_of_leds; led_idx++)
     {
@@ -377,7 +379,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
          // qDebug() << "filled underglow_map";
          // qDebug() << led_idx;
          // qDebug() << led_idx << led_names[led_idx].c_str();
-         // keyboard_led.name = led_names[led_idx];
+         keyboard_led.name = led_names[led_idx];
          // keyboard_led.name = "Key: A";
          // keyboard_led.value = 0;
          leds.push_back(keyboard_led);
