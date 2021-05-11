@@ -98,9 +98,7 @@ enum
 
 enum
 {
-    QMK_RGBMATRIX_NUMBER_OF_KEY_LEDS_BYTE = 1,
-    QMK_RGBMATRIX_NUMBER_OF_UNEDRGLOW_LEDS_BYTE = 2,
-    QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE = 3
+    QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE = 1
 };
 
 enum
@@ -130,8 +128,6 @@ public:
     std::string GetLocation();
     std::string GetDeviceName();
     std::string GetDeviceVendor();
-    unsigned int GetNumberOfKeyLEDs();
-    unsigned int GetNumberOfUnderglowLEDs();
     unsigned int GetTotalNumberOfLEDs();
     unsigned int GetMode();
     unsigned int GetModeSpeed();
@@ -139,7 +135,7 @@ public:
     std::vector<point_t> GetLEDPoints();
     std::vector<unsigned int> GetLEDFlags();
     std::vector<std::string> GetLEDNames();
-    void SetIdxConversionMap(unsigned int* idx_conversion);
+    void SetIdxConversionMap(std::vector<unsigned int> idx_conversion);
 
     unsigned int GetProtocolVersion();
     void GetDeviceInfo();
@@ -160,8 +156,6 @@ private:
 
     std::string device_name;
     std::string device_vendor;
-    unsigned int number_of_key_leds;
-    unsigned int number_of_underglow_leds;
     unsigned int total_number_of_leds;
     unsigned int mode;
     unsigned int mode_speed;
@@ -169,7 +163,7 @@ private:
     std::vector<point_t> led_points;
     std::vector<unsigned int> led_flags;
     std::vector<std::string> led_names;
-    unsigned int* openrgb_idx_to_qmk_idx;
+    std::vector<unsigned int> openrgb_idx_to_qmk_idx;
 
     std::vector<RGBColor> AddEmptyLEDs(std::vector<RGBColor> colors);
 };

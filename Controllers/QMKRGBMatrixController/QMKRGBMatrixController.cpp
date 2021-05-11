@@ -89,16 +89,6 @@ std::string QMKRGBMatrixController::GetDeviceVendor()
     return device_vendor;
 }
 
-unsigned int QMKRGBMatrixController::GetNumberOfKeyLEDs()
-{
-    return number_of_key_leds;
-}
-
-unsigned int QMKRGBMatrixController::GetNumberOfUnderglowLEDs()
-{
-    return number_of_underglow_leds;
-}
-
 unsigned int QMKRGBMatrixController::GetTotalNumberOfLEDs()
 {
     return total_number_of_leds;
@@ -134,7 +124,7 @@ std::vector<std::string> QMKRGBMatrixController::GetLEDNames()
     return led_names;
 }
 
-void QMKRGBMatrixController::SetIdxConversionMap(unsigned int* idx_conversion)
+void QMKRGBMatrixController::SetIdxConversionMap(std::vector<unsigned int> idx_conversion)
 {
     openrgb_idx_to_qmk_idx = idx_conversion;
 }
@@ -179,8 +169,6 @@ void QMKRGBMatrixController::GetDeviceInfo()
     hid_write(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
-    number_of_key_leds = usb_buf[QMK_RGBMATRIX_NUMBER_OF_KEY_LEDS_BYTE];
-    number_of_underglow_leds = usb_buf[QMK_RGBMATRIX_NUMBER_OF_UNEDRGLOW_LEDS_BYTE];
     total_number_of_leds = usb_buf[QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE];
 
     int i = QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE + 1;
@@ -415,8 +403,8 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 std::vector<RGBColor> QMKRGBMatrixController::AddEmptyLEDs(std::vector<RGBColor> colors)
 {
     std::vector<RGBColor> new_colors;
-    for (int i; i < GetTotalNumberOfLEDs(); i++) {
-        new_colors.push_back((0, 0, 0));
+    for (int i = 0; i < GetTotalNumberOfLEDs(); i++) {
+        new_colors.push_back(ToRGBColor(0, 0, 0));
     }
     for (int color_idx = 0; color_idx < colors.size(); color_idx++)
     {

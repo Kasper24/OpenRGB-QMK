@@ -217,12 +217,8 @@ void RGBController_QMKRGBMatrix::InitializeMode
 
 void RGBController_QMKRGBMatrix::SetupZones()
 {
-    // const unsigned int number_of_key_leds = qmk_rgb_matrix->GetNumberOfKeyLEDs();
-    const unsigned int number_of_key_leds = qmk_rgb_matrix->GetNumberOfKeyLEDs();
-    const unsigned int number_of_underglow_leds = qmk_rgb_matrix->GetNumberOfUnderglowLEDs();
-    const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
     const unsigned int total_number_of_leds = qmk_rgb_matrix->GetTotalNumberOfLEDs();
-    qDebug() << "Total # of leds: " << total_number_of_leds;
+
     for (int i = 0; i < total_number_of_leds; i++)
     {
         qmk_rgb_matrix->GetLEDInfo(i);
@@ -231,12 +227,13 @@ void RGBController_QMKRGBMatrix::SetupZones()
     std::vector<point_t> led_points = qmk_rgb_matrix->GetLEDPoints();
     std::vector<unsigned int> led_flags = qmk_rgb_matrix->GetLEDFlags();
     std::vector<std::string> led_names = qmk_rgb_matrix->GetLEDNames();
+    std::vector<unsigned int> openrgb_idx_to_qmk_idx = OpenRGBIdxToQMKIdx(led_flags);
+    
+    auto [number_of_key_leds, number_of_underglow_leds] = CountKeyTypes(led_flags, total_number_of_leds);
 
-    qmk_rgb_matrix->SetIdxConversionMap(OpenRGBIdxToQMKIdx(led_points));
+    const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
 
-    for (auto &i : led_names) {
-        qDebug() << i.c_str();
-    }
+    qmk_rgb_matrix->SetIdxConversionMap(openrgb_idx_to_qmk_idx);
 
     std::set<int> rows, columns;
     for (unsigned int i = 0; i < number_of_leds; i++)
@@ -260,7 +257,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
     int x, y;
     for (int i = 0; i < total_number_of_leds; i++)
     {
-        if (led_points[i].x != NO_LED && led_points[i].y != NO_LED)
+        if (led_points[i].x != 255 && led_points[i].y != 255)
         {
             bool underglow = led_flags[i] & 2;
             x = std::round(led_points[i].x/divisor);
@@ -271,7 +268,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
                 {
                     x++;
                 }
-                matrix_map_xl[y][x] = i;
+                matrix_map_xl[y][x] = std::distance(openrgb_idx_to_qmk_idx.begin(), std::find(openrgb_idx_to_qmk_idx.begin(), openrgb_idx_to_qmk_idx.end(), i));
             }
             else
             {
@@ -279,7 +276,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
                 {
                     x++;
                 }
-                underglow_map_xl[y][x] = i;
+                underglow_map_xl[y][x] = std::distance(openrgb_idx_to_qmk_idx.begin(), std::find(openrgb_idx_to_qmk_idx.begin(), openrgb_idx_to_qmk_idx.end(), i));
             }
         }
     }
@@ -294,16 +291,17 @@ void RGBController_QMKRGBMatrix::SetupZones()
         for (std::size_t j = (sizeof matrix_map_xl[i] / sizeof *matrix_map_xl[i]) - 1; j --> 0; )
         {
             can_break = false;
-            if (matrix_map_xl[i][j] != NO_LED && width < (j + 1))
+            if (matrix_map_xl[i][j] != NO_LED && width < ((unsigned int)j + 1))
             {
-                width = j + 1;
+                width = ((unsigned int)j + 1);
                 can_break = true;
                 empty_row = false;
             }
-            else if (matrix_map_xl[i][j] != NO_LED) empty_row = false;
-            if (underglow_map_xl[i][j] != NO_LED && width_udg < (j + 1))
+            else if (matrix_map_xl[i][j] != NO_LED)
+                empty_row = false;
+            if (underglow_map_xl[i][j] != NO_LED && width_udg < ((unsigned int)j + 1))
             {
-                width_udg = j + 1;
+                width_udg = ((unsigned int)j + 1);
                 if (can_break) break;
             }
 
@@ -312,9 +310,11 @@ void RGBController_QMKRGBMatrix::SetupZones()
         if (underglow_map_xl[i][0] != NO_LED) empty_col_udg = false;
         if (empty_row) empty_rows.push_back(i);
     }
+    width = empty_col ? width - 1 : width;
+    width_udg = empty_col_udg ? width_udg - 1 : width_udg;
     unsigned int height = rows.size() - empty_rows.size();
-    unsigned int* matrix_map = new unsigned int[height *(empty_col ? width - 1 : width)];
-    unsigned int* underglow_map = new unsigned int[rows.size() * (empty_col_udg ? width_udg - 1 : width_udg)];
+    unsigned int* matrix_map = new unsigned int[height * width];
+    unsigned int* underglow_map = new unsigned int[rows.size() * width_udg];
     int s = 0;
     for (int i = 0; i < rows.size(); i++)
     {
@@ -325,15 +325,14 @@ void RGBController_QMKRGBMatrix::SetupZones()
         }
         for (int j = 0; j < width; j++)
         {
-            matrix_map[(empty_col ? width - 1 : width) * (i - s) + j] = matrix_map_xl[i][j];
+            matrix_map[width * (i - s) + j] = matrix_map_xl[i][j];
         }
     }
     for (int i = 0; i < rows.size(); i++)
     {
         for (int j = 0; j < width_udg; j++)
         {
-            underglow_map[(empty_col_udg ? width_udg - 1 : width_udg) * i + j] = underglow_map_xl[i][j];
-            // qDebug() << underglow_map[(empty_col_udg ? width_udg - 1 : width_udg) * i + j];
+            underglow_map[width_udg * i + j] = underglow_map_xl[i][j];
         }
     }
 
@@ -344,8 +343,8 @@ void RGBController_QMKRGBMatrix::SetupZones()
     keys_zone.leds_max = keys_zone.leds_min;
     keys_zone.leds_count = keys_zone.leds_min;
     keys_zone.matrix_map = new matrix_map_type;
-    keys_zone.matrix_map->height = rows.size() - empty_rows.size();
-    keys_zone.matrix_map->width = empty_col ? width - 1 : width;
+    keys_zone.matrix_map->height = height;
+    keys_zone.matrix_map->width = width;
     keys_zone.matrix_map->map = matrix_map;
     zones.push_back(keys_zone);
 
@@ -359,52 +358,19 @@ void RGBController_QMKRGBMatrix::SetupZones()
         underglow_zone.leds_count = underglow_zone.leds_min;
         underglow_zone.matrix_map = new matrix_map_type;
         underglow_zone.matrix_map->height = rows.size();
-        underglow_zone.matrix_map->width = empty_col_udg ? width_udg - 1 : width_udg;
+        underglow_zone.matrix_map->width = width_udg;
         underglow_zone.matrix_map->map = underglow_map;
         zones.push_back(underglow_zone);
     }
-    for (auto &led : leds)
-    {
-        qDebug() << led.value;
-        qDebug() << led.name.c_str();
-    }
-    qDebug() << "Finished listing leds";
-
-    qDebug() << "# of led names: " << led_names.size() << number_of_leds;
 
     // leds.resize(number_of_leds);
     for(int led_idx = 0; led_idx < number_of_leds; led_idx++)
     {
          led keyboard_led;
-         // qDebug() << "filled underglow_map";
-         // qDebug() << led_idx;
-         // qDebug() << led_idx << led_names[led_idx].c_str();
          keyboard_led.name = led_names[led_idx];
-         // keyboard_led.name = "Key: A";
-         // keyboard_led.value = 0;
+         keyboard_led.value = openrgb_idx_to_qmk_idx[led_idx];
          leds.push_back(keyboard_led);
-         qDebug() << leds.size();
     }
-    // leds.resize(((rows.size() - empty_rows.size()) * width) + (rows.size() * width));
-    // for (unsigned int led_idx = 0; led_idx < ((rows.size() - empty_rows.size()) * width); led_idx++)
-    // {
-    //     led keyboard_led;
-    //     if (matrix_map[led_idx] == NO_LED)
-    //     {
-    //         keyboard_led.name = "Unused";
-    //
-    //     }
-    //     else
-    //     {
-    //         keyboard_led.name = led_names[matrix_map[led_idx]];
-    //     }
-    //     leds[led_idx] = keyboard_led;
-    // }
-    // for (unsigned int led_idx = 0; led_idx < total_number_of_leds; led_idx++)
-    // {
-    //     led keyboard_led;
-    //     keyboard_led
-    // }
 
     SetupColors();
     GetInitialLEDColors();
@@ -457,19 +423,38 @@ unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
     return divisor;
 }
 
-unsigned int* RGBController_QMKRGBMatrix::OpenRGBIdxToQMKIdx
+std::vector<unsigned int> RGBController_QMKRGBMatrix::OpenRGBIdxToQMKIdx
     (
-        std::vector<point_t> led_points
+        std::vector<unsigned int> led_flags
     )
 {
     std::vector<unsigned int> qmk_led_indices;
-    for (unsigned int qmk_idx = 0; qmk_idx < led_points.size(); qmk_idx++)
+    for (unsigned int qmk_idx = 0; qmk_idx < led_flags.size(); qmk_idx++)
     {
-        if (led_points[qmk_idx].x == 255 && led_points[qmk_idx].y == 255) {
+        if (led_flags[qmk_idx] != 0) {
             qmk_led_indices.push_back(qmk_idx);
         }
     }
-    return qmk_led_indices.data();
+    return qmk_led_indices;
+}
+
+std::pair<unsigned int, unsigned int> RGBController_QMKRGBMatrix::CountKeyTypes
+    (
+        std::vector<unsigned int> led_flags,
+        unsigned int total_led_count
+    )
+{
+    unsigned int underglow_leds = 0, key_leds = 0;
+    for(int i = 0; i < total_led_count; i++)
+    {
+        if(led_flags[i] & 2) {
+            underglow_leds++;
+        }
+        else if (led_flags[i] != 0) {
+            key_leds++;
+        }
+    }
+    return  std::make_pair(key_leds, underglow_leds);
 }
 
 void RGBController_QMKRGBMatrix::GetInitialLEDColors()
