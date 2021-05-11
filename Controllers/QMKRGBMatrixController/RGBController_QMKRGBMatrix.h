@@ -49,8 +49,13 @@ private:
 
     void            GetInitialLEDColors();
 
-    unsigned int*   OpenRGBIdxToQMKIdx
-                    (
-                    std::vector<point_t> led_points
-                    );
+    std::vector<unsigned int>   OpenRGBIdxToQMKIdx
+                                (
+                                std::vector<unsigned int> led_flags
+                                );
+    std::pair<unsigned int, unsigned int>   CountKeyTypes
+                                (
+                                std::vector<unsigned int> led_points,
+                                unsigned int total_led_count
+                                );
 };
