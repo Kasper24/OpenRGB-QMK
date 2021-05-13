@@ -18,7 +18,6 @@
 #include <map>
 #include <cmath>
 #include <QDebug>
-
 #define NO_LED 0xFFFFFFFF
 
 RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version)
@@ -229,7 +228,9 @@ void RGBController_QMKRGBMatrix::SetupZones()
     std::vector<std::string> led_names = qmk_rgb_matrix->GetLEDNames();
     openrgb_idx_to_qmk_idx = OpenRGBIdxToQMKIdx(led_flags);
 
-    auto [number_of_key_leds, number_of_underglow_leds] = CountKeyTypes(led_flags, total_number_of_leds);
+    std::pair<unsigned int, unsigned int> uint_pair = CountKeyTypes(led_flags, total_number_of_leds);
+    const unsigned int number_of_key_leds = uint_pair.first;
+    const unsigned int number_of_underglow_leds = uint_pair.second;
 
     const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
 
@@ -243,9 +244,13 @@ void RGBController_QMKRGBMatrix::SetupZones()
     }
     unsigned int divisor = CalculateDivisor(led_points, rows, columns);
 
-    auto [matrix_map, underglow_map] = PlaceLEDsInMaps(rows, columns, divisor, led_points, led_flags);
+    std::pair<VectorMatrix, VectorMatrix> map_pair = PlaceLEDsInMaps(rows, columns, divisor, led_points, led_flags);
+    VectorMatrix matrix_map = map_pair.first;
+    VectorMatrix underglow_map = map_pair.second;
 
-    auto [new_matrix_map, new_underglow_map] = CleanMatrixMaps(matrix_map, underglow_map, rows.size());
+    std::pair<VectorMatrix, VectorMatrix> map_pair2 = CleanMatrixMaps(matrix_map, underglow_map, rows.size());
+    VectorMatrix new_matrix_map = map_pair2.first;
+    VectorMatrix new_underglow_map = map_pair2.second;
 
     // These vectors are class members because if they go out of scope, the
     // underlying array (used by each zones' matrix_map) is unallocated.
@@ -364,9 +369,9 @@ unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
     )
 {
     std::vector< std::vector<point_t> > row_points(rows.size());
-    for (const auto &pt : led_points)
+    for (const point_t &pt : led_points)
     {
-        for (const auto &i : rows)
+        for (const int &i : rows)
         {
             if (pt.y == i)
             {
@@ -377,7 +382,7 @@ unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
 
     int last_pos;
     std::vector<int> distances;
-    for (const auto &row : row_points)
+    for (const std::vector<point_t> &row : row_points)
     {
         last_pos = 0;
         std::for_each(row.begin(), row.end(), [&distances, &last_pos](const point_t &pt)
@@ -387,13 +392,13 @@ unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
         });
     }
     std::map<int, int> counts;
-    for (const auto &i : distances)
+    for (const int &i : distances)
     {
         counts[i]++;
     }
 
     unsigned int divisor = distances[0];
-    for (const auto &i : counts)
+    for (const std::pair<int, int> &i : counts)
     {
         if (counts[divisor] < i.second)
         {
@@ -437,7 +442,7 @@ std::pair<unsigned int, unsigned int> RGBController_QMKRGBMatrix::CountKeyTypes
     return  std::make_pair(key_leds, underglow_leds);
 }
 
-std::pair<std::vector<std::vector<unsigned int> >, std::vector<std::vector<unsigned int> > > RGBController_QMKRGBMatrix::PlaceLEDsInMaps
+std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::PlaceLEDsInMaps
     (
         std::set<int> unique_rows,
         std::set<int> unique_cols,
@@ -446,8 +451,8 @@ std::pair<std::vector<std::vector<unsigned int> >, std::vector<std::vector<unsig
         std::vector<unsigned int> led_flags
     )
 {
-    std::vector<std::vector<unsigned int> > matrix_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
-    std::vector<std::vector<unsigned int> > underglow_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
+    VectorMatrix matrix_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
+    VectorMatrix underglow_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
 
     unsigned int x, y, openrgb_idx, underglow_counter = 0;
     for (int i = 0; i < qmk_rgb_matrix->GetTotalNumberOfLEDs(); i++)
@@ -477,11 +482,10 @@ std::pair<std::vector<std::vector<unsigned int> >, std::vector<std::vector<unsig
             }
         }
     }
-    qDebug() << "finished placing leds";
     return std::make_pair(matrix_map_xl, underglow_map_xl);
 }
 
-std::vector<std::vector<unsigned int> > RGBController_QMKRGBMatrix::MakeEmptyMatrixMap
+VectorMatrix RGBController_QMKRGBMatrix::MakeEmptyMatrixMap
     (
         unsigned int height,
         unsigned int width
@@ -498,10 +502,10 @@ std::vector<std::vector<unsigned int> > RGBController_QMKRGBMatrix::MakeEmptyMat
     return matrix_map;
 }
 
-std::pair<std::vector<std::vector<unsigned int> >, std::vector<std::vector<unsigned int> > > RGBController_QMKRGBMatrix::CleanMatrixMaps
+std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::CleanMatrixMaps
     (
-        std::vector<std::vector<unsigned int> > matrix_map,
-        std::vector<std::vector<unsigned int> > underglow_map,
+        VectorMatrix matrix_map,
+        VectorMatrix underglow_map,
         unsigned int height
     )
 {
@@ -557,17 +561,16 @@ std::pair<std::vector<std::vector<unsigned int> >, std::vector<std::vector<unsig
 
 std::vector<unsigned int> RGBController_QMKRGBMatrix::FlattenMatrixMap
     (
-        std::vector<std::vector<unsigned int> > matrix_map
+        VectorMatrix matrix_map
     )
 {
     std::vector<unsigned int> flat_map;
 
-    for (auto &row : matrix_map)
+    for (const std::vector<unsigned int> &row : matrix_map)
     {
-        for (auto &item : row)
+        for (const unsigned int &item : row)
         {
             flat_map.push_back(item);
-            // qDebug() << "  " << flat_matrix_map[i * (unsigned int)new_matrix_map.size() + j];
         }
     }
     return flat_map;
