@@ -31,6 +31,9 @@ public:
     void        DeviceUpdateMode();
 private:
     QMKRGBMatrixController* qmk_rgb_matrix;
+    std::vector<unsigned int> openrgb_idx_to_qmk_idx;
+    std::vector<unsigned int> flat_matrix_map;
+    std::vector<unsigned int> flat_underglow_map;
 
     void            InitializeMode
                     (
@@ -54,8 +57,31 @@ private:
                                 std::vector<unsigned int> led_flags
                                 );
     std::pair<unsigned int, unsigned int>   CountKeyTypes
+                                            (
+                                            std::vector<unsigned int> led_points,
+                                            unsigned int total_led_count
+                                            );
+    std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>>   PlaceLEDsInMaps
+                                                                                                (
+                                                                                                (std::set<int> unique_rows,
+                                                                                                std::set<int> unique_cols,
+                                                                                                unsigned int divisor,
+                                                                                                std::vector<point_t> led_points,
+                                                                                                st)d::vector<unsigned int> led_flags
+                                                                                                );
+    std::vector<std::vector<unsigned int>> MakeEmptyMatrixMap
+                                            (
+                                            unsigned int height,
+                                            unsigned int width
+                                            );
+    std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>>   CleanMatrixMaps
+                                                                                                (
+                                                                                                std::vector<std::vector<unsigned int> > matrix_map,
+                                                                                                std::vector<std::vector<unsigned int> > underglow_map,
+                                                                                                unsigned int height
+                                                                                                );
+    std::vector<unsigned int>   FlattenMatrixMap
                                 (
-                                std::vector<unsigned int> led_points,
-                                unsigned int total_led_count
+                                std::vector<std::vector<unsigned int>> matrix_map
                                 );
 };
