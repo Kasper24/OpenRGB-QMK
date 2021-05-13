@@ -14,6 +14,8 @@
 #include <map>
 #include <set>
 
+typedef std::vector<std::vector<unsigned int>> VectorMatrix;
+
 class RGBController_QMKRGBMatrix : public RGBController
 {
 public:
@@ -61,27 +63,27 @@ private:
                                             std::vector<unsigned int> led_points,
                                             unsigned int total_led_count
                                             );
-    std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>>   PlaceLEDsInMaps
-                                                                                                (
-                                                                                                std::set<int> unique_rows,
-                                                                                                std::set<int> unique_cols,
-                                                                                                unsigned int divisor,
-                                                                                                std::vector<point_t> led_points,
-                                                                                                std::vector<unsigned int> led_flags
-                                                                                                );
-    std::vector<std::vector<unsigned int>> MakeEmptyMatrixMap
-                                            (
-                                            unsigned int height,
-                                            unsigned int width
-                                            );
-    std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>>   CleanMatrixMaps
-                                                                                                (
-                                                                                                std::vector<std::vector<unsigned int> > matrix_map,
-                                                                                                std::vector<std::vector<unsigned int> > underglow_map,
-                                                                                                unsigned int height
-                                                                                                );
+    std::pair<VectorMatrix, VectorMatrix> PlaceLEDsInMaps
+                                        (
+                                        std::set<int> unique_rows,
+                                        std::set<int> unique_cols,
+                                        unsigned int divisor,
+                                        std::vector<point_t> led_points,
+                                        std::vector<unsigned int> led_flags
+                                        );
+    VectorMatrix MakeEmptyMatrixMap
+                (
+                unsigned int height,
+                unsigned int width
+                );
+    std::pair<VectorMatrix, VectorMatrix> CleanMatrixMaps
+                                        (
+                                        std::vector<std::vector<unsigned int> > matrix_map,
+                                        std::vector<std::vector<unsigned int> > underglow_map,
+                                        unsigned int height
+                                        );
     std::vector<unsigned int>   FlattenMatrixMap
                                 (
-                                std::vector<std::vector<unsigned int>> matrix_map
+                                VectorMatrix matrix_map
                                 );
 };
