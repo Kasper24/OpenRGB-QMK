@@ -63,11 +63,11 @@ private:
                                             );
     std::pair<std::vector<std::vector<unsigned int>>, std::vector<std::vector<unsigned int>>>   PlaceLEDsInMaps
                                                                                                 (
-                                                                                                (std::set<int> unique_rows,
+                                                                                                std::set<int> unique_rows,
                                                                                                 std::set<int> unique_cols,
                                                                                                 unsigned int divisor,
                                                                                                 std::vector<point_t> led_points,
-                                                                                                st)d::vector<unsigned int> led_flags
+                                                                                                std::vector<unsigned int> led_flags
                                                                                                 );
     std::vector<std::vector<unsigned int>> MakeEmptyMatrixMap
                                             (
