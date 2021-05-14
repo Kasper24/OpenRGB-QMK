@@ -355,9 +355,13 @@ void RGBController_QMKRGBMatrix::DeviceUpdateMode()
         rgb2hsv(rgb_color, &hsv_color);
 
         if(modes[active_mode].flags & MODE_FLAG_HAS_SPEED)
+        {
             qmk_rgb_matrix->SetMode(hsv_color, modes[active_mode].value, modes[active_mode].speed);
+        }
         else
+        {
             qmk_rgb_matrix->SetMode(hsv_color, modes[active_mode].value, 127);
+        }
     }
 }
 
@@ -432,10 +436,12 @@ std::pair<unsigned int, unsigned int> RGBController_QMKRGBMatrix::CountKeyTypes
     unsigned int underglow_leds = 0, key_leds = 0;
     for(int i = 0; i < total_led_count; i++)
     {
-        if(led_flags[i] & 2) {
+        if(led_flags[i] & 2)
+        {
             underglow_leds++;
         }
-        else if (led_flags[i] != 0) {
+        else if (led_flags[i] != 0)
+        {
             key_leds++;
         }
     }
