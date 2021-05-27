@@ -16,7 +16,7 @@
 /*-----------------------------------------------------*\
 | Protocol version                                      |
 \*-----------------------------------------------------*/
-#define QMK_RGBMATRIX_PROTOCOL_VERSION          0x06
+#define QMK_RGBMATRIX_PROTOCOL_VERSION          0x07
 
 /*-----------------------------------------------------*\
 | Usage and Usage Page                                  |
