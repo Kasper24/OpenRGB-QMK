@@ -192,6 +192,11 @@ void RGBController_QMKRGBMatrix::SetupZones()
     const unsigned int number_of_underglow_leds = uint_pair.second;
     const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
 
+    for(unsigned int i = 0; i < number_of_underglow_leds; i++)
+    {
+        led_names.push_back("Underglow: " + std::to_string(number_of_key_leds + i));
+    }
+
     std::set<int> rows, columns;
     for (unsigned int i = 0; i < number_of_leds; i++)
     {
@@ -242,10 +247,10 @@ void RGBController_QMKRGBMatrix::SetupZones()
 
     for(int led_idx = 0; led_idx < number_of_leds; led_idx++)
     {
-         led keyboard_led;
-         //keyboard_led.name = led_names[led_idx];
-         keyboard_led.value = led_idx;
-         leds.push_back(keyboard_led);
+        led keyboard_led;
+        keyboard_led.name = led_names[led_idx];
+        keyboard_led.value = led_idx;
+        leds.push_back(keyboard_led);
     }
 
     SetupColors();

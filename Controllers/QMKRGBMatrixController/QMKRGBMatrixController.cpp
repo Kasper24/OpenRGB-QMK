@@ -234,11 +234,7 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
     led_points.push_back(point_t{usb_buf[1], usb_buf[2]});
     led_flags.push_back(usb_buf[3]);
 
-    if(usb_buf[3] & 2)
-    {
-        led_names.push_back("Underglow: " + std::to_string(led));
-    }
-    else if(usb_buf[4] != 0)
+    if(usb_buf[4] != 0)
     {
         if (QMKKeycodeToKeynameMap.count(usb_buf[4]) > 0)
         {
