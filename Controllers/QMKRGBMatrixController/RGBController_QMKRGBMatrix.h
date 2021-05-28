@@ -11,8 +11,12 @@
 
 #include "RGBController.h"
 #include "QMKRGBMatrixController.h"
+#include <algorithm>
+#include <cmath>
 #include <map>
 #include <set>
+
+#define NO_LED 0xFFFFFFFF
 
 typedef std::vector<std::vector<unsigned int>> VectorMatrix;
 
@@ -33,7 +37,6 @@ public:
     void        DeviceUpdateMode();
 private:
     QMKRGBMatrixController* qmk_rgb_matrix;
-    std::vector<unsigned int> openrgb_idx_to_qmk_idx;
     std::vector<unsigned int> flat_matrix_map;
     std::vector<unsigned int> flat_underglow_map;
 
@@ -54,10 +57,6 @@ private:
 
     void            GetInitialLEDColors();
 
-    std::vector<unsigned int>   OpenRGBIdxToQMKIdx
-                                (
-                                std::vector<unsigned int> led_flags
-                                );
     std::pair<unsigned int, unsigned int>   CountKeyTypes
                                             (
                                             std::vector<unsigned int> led_points,

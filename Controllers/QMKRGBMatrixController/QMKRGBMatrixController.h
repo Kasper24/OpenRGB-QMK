@@ -12,7 +12,8 @@
 #include "RGBController.h"
 #include "hsv.h"
 #include <hidapi/hidapi.h>
-#include <string>
+#include <cstring>
+#include <map>
 
 #define QMK_RGBMATRIX_PACKET_SIZE 65
 
@@ -135,7 +136,6 @@ public:
     std::vector<point_t> GetLEDPoints();
     std::vector<unsigned int> GetLEDFlags();
     std::vector<std::string> GetLEDNames();
-    void SetIdxConversionMap(std::vector<unsigned int> idx_conversion);
 
     unsigned int GetProtocolVersion();
     void GetDeviceInfo();
@@ -163,7 +163,4 @@ private:
     std::vector<point_t> led_points;
     std::vector<unsigned int> led_flags;
     std::vector<std::string> led_names;
-    std::vector<unsigned int> openrgb_idx_to_qmk_idx;
-
-    std::vector<RGBColor> AddEmptyLEDs(std::vector<RGBColor> colors);
 };
