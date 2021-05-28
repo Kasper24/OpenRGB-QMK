@@ -1,9 +1,10 @@
 /*-------------------------------------------------------------------*\
-|  QMKRGBMatrixControllerDetect.cpp                                     |
+|  QMKRGBMatrixControllerDetect.cpp                                   |
 |                                                                     |
 |  Driver for QMK keybaords using RGB Matrix                          |
 |                                                                     |
 |  Kasper24         11th November 2020                                |
+|  Jath03           28th May 2021                                     |
 |                                                                     |
 \*-------------------------------------------------------------------*/
 

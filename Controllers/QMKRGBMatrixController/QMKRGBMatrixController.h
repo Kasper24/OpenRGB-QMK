@@ -4,6 +4,7 @@
 |  Driver for QMK keybaords using RGB Matrix                          |
 |                                                                     |
 |  Kasper         10th Octobber 2020                                  |
+|  Jath03           28th May 2021                                     |
 |                                                                     |
 \*-------------------------------------------------------------------*/
 
