@@ -8,9 +8,6 @@
 \*-------------------------------------------------------------------*/
 
 #include "QMKRGBMatrixController.h"
-#include <cstring>
-#include <map>
-#include <QDebug>
 
 static std::map<uint8_t, std::string> QMKKeycodeToKeynameMap
 {
@@ -123,12 +120,6 @@ std::vector<std::string> QMKRGBMatrixController::GetLEDNames()
 {
     return led_names;
 }
-
-void QMKRGBMatrixController::SetIdxConversionMap(std::vector<unsigned int> idx_conversion)
-{
-    openrgb_idx_to_qmk_idx = idx_conversion;
-}
-
 
 unsigned int QMKRGBMatrixController::GetProtocolVersion()
 {
@@ -250,7 +241,6 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
     {
         if (QMKKeycodeToKeynameMap.count(usb_buf[4]) > 0)
         {
-            // qDebug() << led << usb_buf[4] << QMKKeycodeToKeynameMap[usb_buf[4]].data();
             led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[4]]);
         }
         else
@@ -296,7 +286,7 @@ RGBColor QMKRGBMatrixController::GetDirectModeLEDColor(unsigned int led)
     \*-----------------------------------------------------*/
     usb_buf[0x00] = 0x00;
     usb_buf[0x01] = QMK_RGBMATRIX_GET_DIRECT_MODE_LED_COLOR;
-    usb_buf[0x02] = openrgb_idx_to_qmk_idx[led];
+    usb_buf[0x02] = led;
 
     hid_write(dev, usb_buf, 65);
     hid_read(dev, usb_buf, 65);
@@ -346,7 +336,7 @@ void QMKRGBMatrixController::DirectModeSetSingleLED(unsigned int led, unsigned c
 
     usb_buf[0x00] = 0x00;
     usb_buf[0x01] = QMK_RGBMATRIX_DIRECT_MODE_SET_SINGLE_LED;
-    usb_buf[0x02] = openrgb_idx_to_qmk_idx[led];
+    usb_buf[0x02] = led;
     usb_buf[0x03] = red;
     usb_buf[0x04] = green;
     usb_buf[0x05] = blue;
@@ -362,8 +352,6 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 {
     unsigned int leds_sent = 0;
     unsigned int leds_per_update = 20;
-
-    colors = AddEmptyLEDs(colors);
 
     while (leds_sent < leds_count)
     {
@@ -398,17 +386,4 @@ void QMKRGBMatrixController::DirectModeSetLEDs(std::vector<RGBColor> colors, uns
 
         leds_sent += leds_per_update;
     }
-}
-
-std::vector<RGBColor> QMKRGBMatrixController::AddEmptyLEDs(std::vector<RGBColor> colors)
-{
-    std::vector<RGBColor> new_colors;
-    for (int i = 0; i < GetTotalNumberOfLEDs(); i++) {
-        new_colors.push_back(ToRGBColor(0, 0, 0));
-    }
-    for (int color_idx = 0; color_idx < colors.size(); color_idx++)
-    {
-        new_colors[openrgb_idx_to_qmk_idx[color_idx]] = colors[color_idx];
-    }
-    return new_colors;
 }

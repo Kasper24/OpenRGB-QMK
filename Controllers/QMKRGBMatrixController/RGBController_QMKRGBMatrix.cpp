@@ -10,16 +10,6 @@
 #include "hsv.h"
 #include "RGBController_QMKRGBMatrix.h"
 
-#include <iostream>
-#include <set>
-#include <vector>
-#include <iterator>
-#include <algorithm>
-#include <map>
-#include <cmath>
-#include <QDebug>
-#define NO_LED 0xFFFFFFFF
-
 RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version)
 {
     qmk_rgb_matrix = qmk_rgb_matrix_ptr;
@@ -183,37 +173,6 @@ RGBController_QMKRGBMatrix::~RGBController_QMKRGBMatrix()
     }
 }
 
-void RGBController_QMKRGBMatrix::InitializeMode
-    (
-    std::string name,
-    unsigned int &current_mode,
-    unsigned int flags,
-    unsigned int color_mode
-    )
-{
-    mode qmk_mode;
-    qmk_mode.name       = name;
-    qmk_mode.value      = current_mode++;
-    qmk_mode.flags      = flags;
-    qmk_mode.color_mode =  color_mode;
-
-    if(flags & MODE_FLAG_HAS_SPEED)
-    {
-        qmk_mode.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
-        qmk_mode.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
-        qmk_mode.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
-    }
-    if(flags & MODE_FLAG_HAS_MODE_SPECIFIC_COLOR)
-    {
-        qmk_mode.colors_min = 1;
-        qmk_mode.colors_max = 1;
-        qmk_mode.colors.resize(1);
-        qmk_mode.colors[0] = qmk_rgb_matrix->GetModeColor();
-    }
-
-    modes.push_back(qmk_mode);
-}
-
 void RGBController_QMKRGBMatrix::SetupZones()
 {
     const unsigned int total_number_of_leds = qmk_rgb_matrix->GetTotalNumberOfLEDs();
@@ -226,15 +185,11 @@ void RGBController_QMKRGBMatrix::SetupZones()
     std::vector<point_t> led_points = qmk_rgb_matrix->GetLEDPoints();
     std::vector<unsigned int> led_flags = qmk_rgb_matrix->GetLEDFlags();
     std::vector<std::string> led_names = qmk_rgb_matrix->GetLEDNames();
-    openrgb_idx_to_qmk_idx = OpenRGBIdxToQMKIdx(led_flags);
 
     std::pair<unsigned int, unsigned int> uint_pair = CountKeyTypes(led_flags, total_number_of_leds);
     const unsigned int number_of_key_leds = uint_pair.first;
     const unsigned int number_of_underglow_leds = uint_pair.second;
-
     const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
-
-    qmk_rgb_matrix->SetIdxConversionMap(openrgb_idx_to_qmk_idx);
 
     std::set<int> rows, columns;
     for (unsigned int i = 0; i < number_of_leds; i++)
@@ -256,7 +211,6 @@ void RGBController_QMKRGBMatrix::SetupZones()
     // underlying array (used by each zones' matrix_map) is unallocated.
     flat_matrix_map = FlattenMatrixMap(new_matrix_map);
     flat_underglow_map = FlattenMatrixMap(new_underglow_map);
-
 
     zone keys_zone;
     keys_zone.name = "Keys";
@@ -288,10 +242,8 @@ void RGBController_QMKRGBMatrix::SetupZones()
     for(int led_idx = 0; led_idx < number_of_leds; led_idx++)
     {
          led keyboard_led;
-         keyboard_led.name = led_names[led_idx];
-         // QMK counts leds differently than OpenRGB.  If, for whatever reason,
-         // you want/need to use QMK's indexing, each led stores that as its value.
-         keyboard_led.value = openrgb_idx_to_qmk_idx[led_idx];
+         //keyboard_led.name = led_names[led_idx];
+         keyboard_led.value = led_idx;
          leds.push_back(keyboard_led);
     }
 
@@ -365,6 +317,37 @@ void RGBController_QMKRGBMatrix::DeviceUpdateMode()
     }
 }
 
+void RGBController_QMKRGBMatrix::InitializeMode
+    (
+    std::string name,
+    unsigned int &current_mode,
+    unsigned int flags,
+    unsigned int color_mode
+    )
+{
+    mode qmk_mode;
+    qmk_mode.name       = name;
+    qmk_mode.value      = current_mode++;
+    qmk_mode.flags      = flags;
+    qmk_mode.color_mode =  color_mode;
+
+    if(flags & MODE_FLAG_HAS_SPEED)
+    {
+        qmk_mode.speed_min     = QMK_RGBMATRIX_SPEED_SLOWEST;
+        qmk_mode.speed_max     = QMK_RGBMATRIX_SPEED_FASTEST;
+        qmk_mode.speed         = QMK_RGBMATRIX_SPEED_NORMAL;
+    }
+    if(flags & MODE_FLAG_HAS_MODE_SPECIFIC_COLOR)
+    {
+        qmk_mode.colors_min = 1;
+        qmk_mode.colors_max = 1;
+        qmk_mode.colors.resize(1);
+        qmk_mode.colors[0] = qmk_rgb_matrix->GetModeColor();
+    }
+
+    modes.push_back(qmk_mode);
+}
+
 unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
     (
     std::vector<point_t> led_points,
@@ -412,21 +395,6 @@ unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
     return divisor;
 }
 
-std::vector<unsigned int> RGBController_QMKRGBMatrix::OpenRGBIdxToQMKIdx
-    (
-        std::vector<unsigned int> led_flags
-    )
-{
-    std::vector<unsigned int> qmk_led_indices;
-    for (unsigned int qmk_idx = 0; qmk_idx < led_flags.size(); qmk_idx++)
-    {
-        if (led_flags[qmk_idx] != 0) {
-            qmk_led_indices.push_back(qmk_idx);
-        }
-    }
-    return qmk_led_indices;
-}
-
 std::pair<unsigned int, unsigned int> RGBController_QMKRGBMatrix::CountKeyTypes
     (
         std::vector<unsigned int> led_flags,
@@ -468,14 +436,13 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::PlaceLEDsInMap
             bool underglow = led_flags[i] & 2;
             x = std::round(led_points[i].x/divisor);
             y = std::distance(unique_rows.begin(), unique_rows.find(led_points[i].y));
-            openrgb_idx = std::distance(openrgb_idx_to_qmk_idx.begin(), std::find(openrgb_idx_to_qmk_idx.begin(), openrgb_idx_to_qmk_idx.end(), i));
             if (!underglow)
             {
                 while (matrix_map_xl[y][x] != NO_LED)
                 {
                     x++;
                 }
-                matrix_map_xl[y][x] = openrgb_idx;
+                matrix_map_xl[y][x] = i;
             }
             else
             {
