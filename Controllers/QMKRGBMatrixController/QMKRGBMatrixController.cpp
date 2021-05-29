@@ -92,6 +92,11 @@ unsigned int QMKRGBMatrixController::GetTotalNumberOfLEDs()
     return total_number_of_leds;
 }
 
+unsigned int QMKRGBMatrixController::GetTotalNumberOfLEDsWithEmptySpace()
+{
+    return total_number_of_leds_with_empty_space;
+}
+
 unsigned int QMKRGBMatrixController::GetMode()
 {
     return mode;
@@ -162,8 +167,9 @@ void QMKRGBMatrixController::GetDeviceInfo()
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
     total_number_of_leds = usb_buf[QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE];
+    total_number_of_leds_with_empty_space = usb_buf[QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_WITH_EMPTY_SPACE_BYTE];
 
-    int i = QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE + 1;
+    int i = QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_WITH_EMPTY_SPACE_BYTE + 1;
     while (usb_buf[i] != 0)
     {
         device_name.push_back(usb_buf[i]);
@@ -231,8 +237,11 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
     hid_write(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
-    led_points.push_back(point_t{usb_buf[1], usb_buf[2]});
-    led_flags.push_back(usb_buf[3]);
+    if(usb_buf[62] != QMK_RGBMATRIX_FAILURE)
+    {
+        led_points.push_back(point_t{usb_buf[1], usb_buf[2]});
+        led_flags.push_back(usb_buf[3]);
+    }
 
     if(usb_buf[4] != 0)
     {

@@ -177,8 +177,8 @@ RGBController_QMKRGBMatrix::~RGBController_QMKRGBMatrix()
 void RGBController_QMKRGBMatrix::SetupZones()
 {
     const unsigned int total_number_of_leds = qmk_rgb_matrix->GetTotalNumberOfLEDs();
-
-    for (int i = 0; i < total_number_of_leds; i++)
+    const unsigned int total_number_of_leds_with_empty_space = qmk_rgb_matrix->GetTotalNumberOfLEDsWithEmptySpace();
+    for (int i = 0; i < std::max(total_number_of_leds, total_number_of_leds_with_empty_space); i++)
     {
         qmk_rgb_matrix->GetLEDInfo(i);
     }
