@@ -248,7 +248,10 @@ void RGBController_QMKRGBMatrix::SetupZones()
     for(int led_idx = 0; led_idx < number_of_leds; led_idx++)
     {
         led keyboard_led;
-        keyboard_led.name = led_names[led_idx];
+        if(led_idx < led_names.size())
+        {
+            keyboard_led.name = led_names[led_idx];
+        }
         keyboard_led.value = led_idx;
         leds.push_back(keyboard_led);
     }
