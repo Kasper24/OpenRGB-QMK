@@ -40,7 +40,6 @@ private:
     QMKRGBMatrixController* qmk_rgb_matrix;
     std::vector<unsigned int> flat_matrix_map;
     std::vector<unsigned int> flat_underglow_map;
-
     void            InitializeMode
                     (
                     std::string name,
@@ -80,7 +79,8 @@ private:
                                         (
                                         std::vector<std::vector<unsigned int> > matrix_map,
                                         std::vector<std::vector<unsigned int> > underglow_map,
-                                        unsigned int height
+                                        unsigned int height,
+                                        bool has_underglow
                                         );
     std::vector<unsigned int>   FlattenMatrixMap
                                 (

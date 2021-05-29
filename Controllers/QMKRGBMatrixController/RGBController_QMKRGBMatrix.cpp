@@ -191,6 +191,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
     const unsigned int number_of_key_leds = uint_pair.first;
     const unsigned int number_of_underglow_leds = uint_pair.second;
     const unsigned int number_of_leds = number_of_key_leds + number_of_underglow_leds;
+    bool has_underglow = number_of_underglow_leds > 0;
 
     for(unsigned int i = 0; i < number_of_underglow_leds; i++)
     {
@@ -209,7 +210,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
     VectorMatrix matrix_map = map_pair.first;
     VectorMatrix underglow_map = map_pair.second;
 
-    std::pair<VectorMatrix, VectorMatrix> map_pair2 = CleanMatrixMaps(matrix_map, underglow_map, rows.size());
+    std::pair<VectorMatrix, VectorMatrix> map_pair2 = CleanMatrixMaps(matrix_map, underglow_map, rows.size(), has_underglow);
     VectorMatrix new_matrix_map = map_pair2.first;
     VectorMatrix new_underglow_map = map_pair2.second;
 
@@ -230,7 +231,7 @@ void RGBController_QMKRGBMatrix::SetupZones()
     keys_zone.matrix_map->map = flat_matrix_map.data();
     zones.push_back(keys_zone);
 
-    if(number_of_underglow_leds > 0)
+    if(has_underglow)
     {
         zone underglow_zone;
         underglow_zone.name = "Underglow";
@@ -488,7 +489,8 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::CleanMatrixMap
     (
         VectorMatrix matrix_map,
         VectorMatrix underglow_map,
-        unsigned int height
+        unsigned int height,
+        bool has_underglow
     )
 {
     bool empty_col = true, empty_col_udg = true, empty_row = true;
@@ -531,11 +533,16 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::CleanMatrixMap
     for (int i = 0; i < new_height; i++)
     {
         matrix_map[i].erase(matrix_map[i].begin()+width, matrix_map[i].end());
-        underglow_map[i].erase(underglow_map[i].begin()+width_udg, underglow_map[i].end());
+        if (has_underglow)
+        {
+            underglow_map[i].erase(underglow_map[i].begin()+width_udg, underglow_map[i].end());
+        }
     }
-    for (int i = new_height; i < height; i++)
-    {
-        underglow_map[i].erase(underglow_map[i].begin()+width_udg, underglow_map[i].end());
+    if (has_underglow) {
+        for (int i = new_height; i < height; i++)
+        {
+            underglow_map[i].erase(underglow_map[i].begin()+width_udg, underglow_map[i].end());
+        }
     }
 
     return std::make_pair(matrix_map, underglow_map);
