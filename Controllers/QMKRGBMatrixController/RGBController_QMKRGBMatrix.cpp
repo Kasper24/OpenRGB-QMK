@@ -491,35 +491,38 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::CleanMatrixMap
     bool empty_col = true, empty_col_udg = true, empty_row = true;
     int width = 0, width_udg = 0;
     std::vector<int> empty_rows;
-    bool can_break;
+    bool can_break, can_break_udg;
     for (int i = 0; i < height; i++)
     {
         empty_row = true;
+        can_break = false;
+        can_break_udg = false;
         for (std::size_t j = matrix_map[i].size() - 1; j --> 0; )
         {
-            can_break = false;
-            if (matrix_map[i][j] != NO_LED && width < (j + 1))
+            if (matrix_map[i][j] != NO_LED && width < (j + 1) && !can_break)
             {
                 width = (j + 1);
                 can_break = true;
                 empty_row = false;
             }
             else if (matrix_map[i][j] != NO_LED)
+            {
                 empty_row = false;
-            if (underglow_map[i][j] != NO_LED && width_udg < (j + 1))
+            }
+            if (underglow_map[i][j] != NO_LED && width_udg < (j + 1) && !can_break_udg)
             {
                 width_udg = (j + 1);
-                if (can_break) break;
+                can_break_udg = true;
             }
-
+            if (can_break && can_break_udg) break;
         }
         if (matrix_map[i][0] != NO_LED) empty_col = false;
         if (underglow_map[i][0] != NO_LED) empty_col_udg = false;
         if (empty_row) empty_rows.push_back(i);
     }
-    width = empty_col ? width - 1 : width;
-    width_udg = empty_col_udg ? width_udg - 1 : width_udg;
     unsigned int new_height = height - empty_rows.size();
+    width = empty_col ? width - 1 : width;
+    width_udg = empty_col_udg && empty_col ? width_udg - 1 : width_udg;
     for (unsigned i = empty_rows.size(); i --> 0; )
     {
         matrix_map.erase(matrix_map.begin()+empty_rows[i]);
@@ -527,6 +530,12 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::CleanMatrixMap
 
     for (int i = 0; i < new_height; i++)
     {
+        if (empty_col) {
+            matrix_map[i].erase(matrix_map[i].begin(), matrix_map[i].begin() + 1);
+        }
+        if (empty_col_udg && empty_col) {
+            underglow_map[i].erase(underglow_map[i].begin(), underglow_map[i].begin() + 1);
+        }
         matrix_map[i].erase(matrix_map[i].begin()+width, matrix_map[i].end());
         if (has_underglow)
         {
