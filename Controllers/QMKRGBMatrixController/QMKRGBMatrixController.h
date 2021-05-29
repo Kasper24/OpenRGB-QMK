@@ -25,7 +25,6 @@ enum CommandsId
     QMK_RGBMATRIX_GET_MODE_INFO,
     QMK_RGBMATRIX_GET_LED_INFO,
     QMK_RGBMATRIX_GET_IS_MODE_ENABLED,
-    QMK_RGBMATRIX_GET_DIRECT_MODE_LED_COLOR,
 
     QMK_RGBMATRIX_SET_MODE,
     QMK_RGBMATRIX_DIRECT_MODE_SET_SINGLE_LED,
@@ -106,6 +105,17 @@ enum
 
 enum
 {
+    QMK_RGBMATRIX_POINT_X_BYTE = 1,
+    QMK_RGBMATRIX_POINT_Y_BYTE = 2,
+    QMK_RGBMATRIX_FLAG_BYTE = 3,
+    QMK_RGBMATRIX_R_COLOR_BYTE = 4,
+    QMK_RGBMATRIX_G_COLOR_BYTE = 5,
+    QMK_RGBMATRIX_B_COLOR_BYTE = 6,
+    QMK_RGBMATRIX_KEYCODE_BYTE = 7
+};
+
+enum
+{
     QMK_RGBMATRIX_ZONE_TYPE_BYTE = 1,
     QMK_RGBMATRIX_ZONE_SIZE_BYTE = 2
 };
@@ -139,13 +149,13 @@ public:
     std::vector<point_t> GetLEDPoints();
     std::vector<unsigned int> GetLEDFlags();
     std::vector<std::string> GetLEDNames();
+    std::vector<RGBColor> GetLEDColors();
 
     unsigned int GetProtocolVersion();
     void GetDeviceInfo();
     void GetModeInfo();
     void GetLEDInfo(unsigned int led);
     bool GetIsModeEnabled(unsigned int mode);
-    RGBColor GetDirectModeLEDColor(unsigned int led);
 
     void SetMode(hsv_t hsv_color, unsigned char mode, unsigned char speed);
     void DirectModeSetSingleLED(unsigned int led, unsigned char red, unsigned char green, unsigned char blue);
@@ -167,4 +177,5 @@ private:
     std::vector<point_t> led_points;
     std::vector<unsigned int> led_flags;
     std::vector<std::string> led_names;
+    std::vector<RGBColor> led_colors;
 };

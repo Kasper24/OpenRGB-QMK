@@ -49,8 +49,6 @@ private:
                                             unsigned int color_mode
                                             );
 
-    void                                    GetInitialLEDColors();
-
     unsigned int                            CalculateDivisor
                                             (
                                             std::vector<point_t> led_points,

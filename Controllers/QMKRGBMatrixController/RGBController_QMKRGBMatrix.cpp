@@ -258,7 +258,10 @@ void RGBController_QMKRGBMatrix::SetupZones()
     }
 
     SetupColors();
-    GetInitialLEDColors();
+    for(unsigned int i = 0; i < leds.size(); i++)
+    {
+        colors[i] = qmk_rgb_matrix->GetLEDColors()[i];
+    }
 }
 
 void RGBController_QMKRGBMatrix::ResizeZone(int /*zone*/, int /*new_size*/)
@@ -348,14 +351,6 @@ void RGBController_QMKRGBMatrix::InitializeMode
     }
 
     modes.push_back(qmk_mode);
-}
-
-void RGBController_QMKRGBMatrix::GetInitialLEDColors()
-{
-    for(unsigned int i = 0; i < leds.size(); i++)
-    {
-        colors[i] = qmk_rgb_matrix->GetDirectModeLEDColor(i);
-    }
 }
 
 unsigned int RGBController_QMKRGBMatrix::CalculateDivisor
