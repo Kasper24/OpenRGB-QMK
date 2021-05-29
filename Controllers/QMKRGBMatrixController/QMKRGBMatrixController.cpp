@@ -127,6 +127,11 @@ std::vector<std::string> QMKRGBMatrixController::GetLEDNames()
     return led_names;
 }
 
+std::vector<RGBColor>  QMKRGBMatrixController::GetLEDColors()
+{
+    return led_colors;
+}
+
 unsigned int QMKRGBMatrixController::GetProtocolVersion()
 {
     unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
@@ -239,15 +244,16 @@ void QMKRGBMatrixController::GetLEDInfo(unsigned int led)
 
     if(usb_buf[62] != QMK_RGBMATRIX_FAILURE)
     {
-        led_points.push_back(point_t{usb_buf[1], usb_buf[2]});
-        led_flags.push_back(usb_buf[3]);
+        led_points.push_back(point_t{usb_buf[QMK_RGBMATRIX_POINT_X_BYTE], usb_buf[QMK_RGBMATRIX_POINT_Y_BYTE]});
+        led_flags.push_back(usb_buf[QMK_RGBMATRIX_FLAG_BYTE]);
+        led_colors.push_back(ToRGBColor(usb_buf[QMK_RGBMATRIX_R_COLOR_BYTE], usb_buf[QMK_RGBMATRIX_G_COLOR_BYTE], usb_buf[QMK_RGBMATRIX_B_COLOR_BYTE]));
     }
 
-    if(usb_buf[4] != 0)
+    if(usb_buf[QMK_RGBMATRIX_KEYCODE_BYTE] != 0)
     {
-        if (QMKKeycodeToKeynameMap.count(usb_buf[4]) > 0)
+        if (QMKKeycodeToKeynameMap.count(usb_buf[QMK_RGBMATRIX_KEYCODE_BYTE]) > 0)
         {
-            led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[4]]);
+            led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[QMK_RGBMATRIX_KEYCODE_BYTE]]);
         }
         else
         {
@@ -276,28 +282,6 @@ bool QMKRGBMatrixController::GetIsModeEnabled(unsigned int mode)
     hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
 
     return usb_buf[1] == QMK_RGBMATRIX_SUCCESS ? true : false;
-}
-
-RGBColor QMKRGBMatrixController::GetDirectModeLEDColor(unsigned int led)
-{
-    unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
-
-    /*-----------------------------------------------------*\
-    | Zero out buffer                                       |
-    \*-----------------------------------------------------*/
-    memset(usb_buf, 0x00, QMK_RGBMATRIX_PACKET_SIZE);
-
-    /*-----------------------------------------------------*\
-    | Set up config table request packet                    |
-    \*-----------------------------------------------------*/
-    usb_buf[0x00] = 0x00;
-    usb_buf[0x01] = QMK_RGBMATRIX_GET_DIRECT_MODE_LED_COLOR;
-    usb_buf[0x02] = led;
-
-    hid_write(dev, usb_buf, 65);
-    hid_read(dev, usb_buf, 65);
-
-    return ToRGBColor(usb_buf[1], usb_buf[2], usb_buf[3]);
 }
 
 void QMKRGBMatrixController::SetMode(hsv_t hsv_color, unsigned char mode, unsigned char speed)
