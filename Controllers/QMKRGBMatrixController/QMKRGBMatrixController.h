@@ -100,7 +100,8 @@ enum
 
 enum
 {
-    QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE = 1
+    QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_BYTE = 1,
+    QMK_RGBMATRIX_TOTAL_NUMBER_OF_LEDS_WITH_EMPTY_SPACE_BYTE = 2
 };
 
 enum
@@ -131,6 +132,7 @@ public:
     std::string GetDeviceName();
     std::string GetDeviceVendor();
     unsigned int GetTotalNumberOfLEDs();
+    unsigned int GetTotalNumberOfLEDsWithEmptySpace();
     unsigned int GetMode();
     unsigned int GetModeSpeed();
     unsigned int GetModeColor();
@@ -158,6 +160,7 @@ private:
     std::string device_name;
     std::string device_vendor;
     unsigned int total_number_of_leds;
+    unsigned int total_number_of_leds_with_empty_space;
     unsigned int mode;
     unsigned int mode_speed;
     RGBColor mode_color;
