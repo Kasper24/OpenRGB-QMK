@@ -430,8 +430,8 @@ std::pair<VectorMatrix, VectorMatrix> RGBController_QMKRGBMatrix::PlaceLEDsInMap
         std::vector<unsigned int> led_flags
     )
 {
-    VectorMatrix matrix_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
-    VectorMatrix underglow_map_xl = MakeEmptyMatrixMap(unique_rows.size(), unique_cols.size());
+    VectorMatrix matrix_map_xl = MakeEmptyMatrixMap(unique_rows.size(), std::round(255/divisor) + 10);
+    VectorMatrix underglow_map_xl = MakeEmptyMatrixMap(unique_rows.size(), std::round(255/divisor) + 10);
 
     unsigned int x, y, openrgb_idx, underglow_counter = 0;
     for (int i = 0; i < qmk_rgb_matrix->GetTotalNumberOfLEDs(); i++)
