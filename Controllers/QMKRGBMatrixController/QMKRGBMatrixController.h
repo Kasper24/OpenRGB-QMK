@@ -21,6 +21,7 @@
 enum CommandsId
 {
     QMK_RGBMATRIX_GET_PROTOCOL_VERSION = 1,
+    QMK_RGBMATRIX_GET_QMK_VERSION,
     QMK_RGBMATRIX_GET_DEVICE_INFO,
     QMK_RGBMATRIX_GET_MODE_INFO,
     QMK_RGBMATRIX_GET_LED_INFO,
@@ -140,6 +141,7 @@ public:
     std::vector<RGBColor> GetLEDColors();
 
     unsigned int GetProtocolVersion();
+    std::string GetQMKVersion();
     void GetDeviceInfo();
     void GetModeInfo();
     void GetLEDInfo(unsigned int led);

@@ -17,7 +17,7 @@
 /*-----------------------------------------------------*\
 | Protocol version                                      |
 \*-----------------------------------------------------*/
-#define QMK_RGBMATRIX_PROTOCOL_VERSION          0x08
+#define QMK_RGBMATRIX_PROTOCOL_VERSION          0x09
 
 /*-----------------------------------------------------*\
 | Usage and Usage Page                                  |
@@ -53,7 +53,7 @@ void DetectQMKRGBMatrixControllers(hid_device_info *info, const std::string&)
         unsigned int version = controller->GetProtocolVersion();
         if (version == QMK_RGBMATRIX_PROTOCOL_VERSION)
         {
-            RGBController_QMKRGBMatrix *rgb_controller = new RGBController_QMKRGBMatrix(controller, version);
+            RGBController_QMKRGBMatrix *rgb_controller = new RGBController_QMKRGBMatrix(controller);
             ResourceManager::get()->RegisterRGBController(rgb_controller);
         }
         else

@@ -24,7 +24,7 @@ typedef std::vector<std::vector<unsigned int>> VectorMatrix;
 class RGBController_QMKRGBMatrix : public RGBController
 {
 public:
-    RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr, unsigned int protocol_version);
+    RGBController_QMKRGBMatrix(QMKRGBMatrixController* qmk_rgb_matrix_ptr);
     ~RGBController_QMKRGBMatrix();
 
     void                                    SetupZones();

@@ -153,6 +153,35 @@ unsigned int QMKRGBMatrixController::GetProtocolVersion()
     return usb_buf[1];
 }
 
+std::string QMKRGBMatrixController::GetQMKVersion()
+{
+    unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
+
+    /*-----------------------------------------------------*\
+    | Zero out buffer                                       |
+    \*-----------------------------------------------------*/
+    memset(usb_buf, 0x00, QMK_RGBMATRIX_PACKET_SIZE);
+
+    /*-----------------------------------------------------*\
+    | Set up config table request packet                    |
+    \*-----------------------------------------------------*/
+    usb_buf[0x00] = 0x00;
+    usb_buf[0x01] = QMK_RGBMATRIX_GET_QMK_VERSION;
+
+    hid_write(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
+    hid_read(dev, usb_buf, QMK_RGBMATRIX_PACKET_SIZE);
+
+    std::string qmk_version;
+    int i = 1;
+    while (usb_buf[i] != 0)
+    {
+        qmk_version.push_back(usb_buf[i]);
+        i++;
+    }
+
+    return qmk_version;
+}
+
 void QMKRGBMatrixController::GetDeviceInfo()
 {
     unsigned char usb_buf[QMK_RGBMATRIX_PACKET_SIZE];
