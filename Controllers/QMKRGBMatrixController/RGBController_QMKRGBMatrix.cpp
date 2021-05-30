@@ -106,6 +106,18 @@ RGBController_QMKRGBMatrix::RGBController_QMKRGBMatrix(QMKRGBMatrixController* q
     if (qmk_rgb_matrix->GetIsModeEnabled(QMK_RGBMATRIX_MODE_JELLYBEAN_RAINDROPS))
         InitializeMode("Jellybean Raindrops", current_mode, 0, MODE_COLORS_NONE);
 
+    if (qmk_rgb_matrix->GetIsModeEnabled(QMK_RGBMATRIX_MODE_HUE_BREATHING))
+        InitializeMode("Hue Breathing", current_mode, MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED,
+            MODE_COLORS_MODE_SPECIFIC);
+
+    if (qmk_rgb_matrix->GetIsModeEnabled(QMK_RGBMATRIX_MODE_HUE_PENDULUM))
+        InitializeMode("Hue Pendulum", current_mode, MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED,
+            MODE_COLORS_MODE_SPECIFIC);
+
+    if (qmk_rgb_matrix->GetIsModeEnabled(QMK_RGBMATRIX_MODE_HUE_WAVE))
+        InitializeMode("Hue Wave", current_mode, MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED,
+            MODE_COLORS_MODE_SPECIFIC);
+
     if (qmk_rgb_matrix->GetIsModeEnabled(QMK_RGBMATRIX_MODE_TYPING_HEATMAP))
         InitializeMode("Typing Heatmap", current_mode, 0, MODE_COLORS_NONE);
 
