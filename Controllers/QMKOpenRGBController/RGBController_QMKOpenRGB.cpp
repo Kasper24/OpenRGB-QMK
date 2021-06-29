@@ -23,11 +23,6 @@ RGBController_QMKOpenRGB::RGBController_QMKOpenRGB(QMKOpenRGBController* control
 
     unsigned int current_mode = 1;
 
-    if(controller->GetIsModeEnabled(QMK_OPENRGB_MODE_OPENRGB_DIRECT))
-    {
-        InitializeMode("Direct", current_mode, MODE_FLAG_HAS_PER_LED_COLOR, MODE_COLORS_PER_LED);
-    }
-
     if(controller->GetIsModeEnabled(QMK_OPENRGB_MODE_SOLID_COLOR))
     {
         InitializeMode("Static", current_mode, MODE_FLAG_HAS_MODE_SPECIFIC_COLOR, MODE_COLORS_MODE_SPECIFIC);
@@ -233,7 +228,25 @@ RGBController_QMKOpenRGB::RGBController_QMKOpenRGB(QMKOpenRGBController* control
         InitializeMode("Solid Reactive Multi Splash", current_mode, MODE_FLAG_HAS_MODE_SPECIFIC_COLOR | MODE_FLAG_HAS_SPEED, MODE_COLORS_MODE_SPECIFIC);
     }
 
-    active_mode = controller->GetMode() - 1;
+    if(controller->GetIsModeEnabled(QMK_OPENRGB_MODE_OPENRGB_DIRECT))
+    {
+        InitializeMode("Direct", current_mode, MODE_FLAG_HAS_PER_LED_COLOR, MODE_COLORS_PER_LED);
+    }
+
+    /*-----------------------------------------------------*\
+    | As we are insertting direct mode at index 0           |
+    | for it to be the first mode in the UI there will      |
+    | be a mismatch between the values. QMK has direct      |
+    | mode last in order, while in OpenRGB it's first.      |
+    \*-----------------------------------------------------*/
+    if(controller->GetMode() == (current_mode - 1))
+    {
+        active_mode = 0;
+    }
+    else
+    {
+        active_mode = controller->GetMode();
+    }
 
     SetupZones();
 }
@@ -470,7 +483,18 @@ void RGBController_QMKOpenRGB::InitializeMode
         qmk_mode.colors[0] = controller->GetModeColor();
     }
 
-    modes.push_back(qmk_mode);
+    /*-----------------------------------------------------*\
+    | Direct mode it the last mode on the QMK firmware      |
+    | but we still want it to appear first on the UI        |
+    \*-----------------------------------------------------*/
+    if(flags & MODE_FLAG_HAS_PER_LED_COLOR)
+    {
+        modes.insert(modes.begin(), qmk_mode);
+    }
+    else
+    {
+        modes.push_back(qmk_mode);
+    }
 }
 
 unsigned int RGBController_QMKOpenRGB::CalculateDivisor
