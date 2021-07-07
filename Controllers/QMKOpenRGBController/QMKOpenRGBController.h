@@ -150,7 +150,7 @@ public:
     std::string     GetQMKVersion();
     void            GetDeviceInfo();
     void            GetModeInfo();
-    void            GetLEDInfo(unsigned int led);
+    void            GetLEDInfo(unsigned int leds_count);
     bool            GetIsModeEnabled(unsigned int mode);
 
     void            SetMode(hsv_t hsv_color, unsigned char mode, unsigned char speed);

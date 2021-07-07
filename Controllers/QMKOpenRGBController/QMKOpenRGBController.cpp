@@ -290,46 +290,63 @@ void QMKOpenRGBController::GetModeInfo()
     mode_color                  = hsv2rgb(&hsv);
 }
 
-void QMKOpenRGBController::GetLEDInfo(unsigned int led)
+void QMKOpenRGBController::GetLEDInfo(unsigned int leds_count)
 {
-    unsigned char usb_buf[QMK_OPENRGB_PACKET_SIZE];
+    unsigned int leds_sent           = 0;
+    unsigned int leds_per_update_info     = 8;
 
-    /*-----------------------------------------------------*\
-    | Zero out buffer                                       |
-    \*-----------------------------------------------------*/
-    memset(usb_buf, 0x00, QMK_OPENRGB_PACKET_SIZE);
-
-    /*-----------------------------------------------------*\
-    | Set up config table request packet                    |
-    \*-----------------------------------------------------*/
-    usb_buf[0x00] = 0x00;
-    usb_buf[0x01] = QMK_OPENRGB_GET_LED_INFO;
-    usb_buf[0x02] = led;
-
-    int bytes_read = 0;
-    do
+    while (leds_sent < leds_count)
     {
-        hid_write(dev, usb_buf, QMK_OPENRGB_PACKET_SIZE);
-        bytes_read = hid_read_timeout(dev, usb_buf, QMK_OPENRGB_PACKET_SIZE, QMK_OPENRGB_HID_READ_TIMEOUT);
-    } while(bytes_read <= 0);
-
-    if(usb_buf[62] != QMK_OPENRGB_FAILURE)
-    {
-        led_points.push_back(point_t{usb_buf[QMK_OPENRGB_POINT_X_BYTE], usb_buf[QMK_OPENRGB_POINT_Y_BYTE]});
-        led_flags.push_back(usb_buf[QMK_OPENRGB_FLAG_BYTE]);
-        led_colors.push_back(ToRGBColor(usb_buf[QMK_OPENRGB_R_COLOR_BYTE], usb_buf[QMK_OPENRGB_G_COLOR_BYTE], usb_buf[QMK_OPENRGB_B_COLOR_BYTE]));
-    }
-
-    if(usb_buf[QMK_OPENRGB_KEYCODE_BYTE] != 0)
-    {
-        if (QMKKeycodeToKeynameMap.count(usb_buf[QMK_OPENRGB_KEYCODE_BYTE]) > 0)
+        if ((leds_count - leds_sent) < leds_per_update_info)
         {
-            led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[QMK_OPENRGB_KEYCODE_BYTE]]);
+            leds_per_update_info = leds_count - leds_sent;
         }
-        else
+
+        unsigned char usb_buf[QMK_OPENRGB_PACKET_SIZE];
+
+        /*-----------------------------------------------------*\
+        | Zero out buffer                                       |
+        \*-----------------------------------------------------*/
+        memset(usb_buf, 0x00, QMK_OPENRGB_PACKET_SIZE);
+
+        /*-----------------------------------------------------*\
+        | Set up config table request packet                    |
+        \*-----------------------------------------------------*/
+        usb_buf[0x00] = 0x00;
+        usb_buf[0x01] = QMK_OPENRGB_GET_LED_INFO;
+        usb_buf[0x02] = leds_sent;
+        usb_buf[0x03] = leds_per_update_info;
+
+        int bytes_read = 0;
+        do
         {
-            led_names.push_back("Key: ");
+            hid_write(dev, usb_buf, QMK_OPENRGB_PACKET_SIZE);
+            bytes_read = hid_read_timeout(dev, usb_buf, QMK_OPENRGB_PACKET_SIZE, QMK_OPENRGB_HID_READ_TIMEOUT);
+        } while(bytes_read <= 0);
+
+        for (unsigned int led_idx = 0; led_idx < leds_per_update_info; led_idx++)
+        {
+            if(usb_buf[(led_idx * 7) + QMK_OPENRGB_FLAG_BYTE] != QMK_OPENRGB_FAILURE)
+            {
+                led_points.push_back(point_t{usb_buf[(led_idx * 7) + QMK_OPENRGB_POINT_X_BYTE], usb_buf[(led_idx * 7) + QMK_OPENRGB_POINT_Y_BYTE]});
+                led_flags.push_back(usb_buf[(led_idx * 7) + QMK_OPENRGB_FLAG_BYTE]);
+                led_colors.push_back(ToRGBColor(usb_buf[(led_idx * 7) + QMK_OPENRGB_R_COLOR_BYTE], usb_buf[(led_idx * 7) + QMK_OPENRGB_G_COLOR_BYTE], usb_buf[(led_idx * 7) + QMK_OPENRGB_B_COLOR_BYTE]));
+            }
+
+            if(usb_buf[(led_idx * 7) + QMK_OPENRGB_KEYCODE_BYTE] != 0)
+            {
+                if (QMKKeycodeToKeynameMap.count(usb_buf[(led_idx * 7) + QMK_OPENRGB_KEYCODE_BYTE]) > 0)
+                {
+                    led_names.push_back("Key: " + QMKKeycodeToKeynameMap[usb_buf[(led_idx * 7) + QMK_OPENRGB_KEYCODE_BYTE]]);
+                }
+                else
+                {
+                    led_names.push_back("Key: ");
+                }
+            }
         }
+
+        leds_sent += leds_per_update_info;
     }
 }
 
