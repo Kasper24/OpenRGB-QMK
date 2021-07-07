@@ -350,7 +350,7 @@ void QMKOpenRGBController::GetLEDInfo(unsigned int leds_count)
     }
 }
 
-bool QMKOpenRGBController::GetIsModeEnabled(unsigned int mode)
+std::vector<unsigned int> QMKOpenRGBController::GetEnabledModes()
 {
     unsigned char usb_buf[QMK_OPENRGB_PACKET_SIZE];
 
@@ -363,8 +363,7 @@ bool QMKOpenRGBController::GetIsModeEnabled(unsigned int mode)
     | Set up config table request packet                    |
     \*-----------------------------------------------------*/
     usb_buf[0x00] = 0x00;
-    usb_buf[0x01] = QMK_OPENRGB_GET_IS_MODE_ENABLED;
-    usb_buf[0x02] = mode;
+    usb_buf[0x01] = QMK_OPENRGB_GET_ENABLED_MODES;
 
     int bytes_read = 0;
     do
@@ -373,7 +372,14 @@ bool QMKOpenRGBController::GetIsModeEnabled(unsigned int mode)
         bytes_read = hid_read_timeout(dev, usb_buf, QMK_OPENRGB_PACKET_SIZE, QMK_OPENRGB_HID_READ_TIMEOUT);
     } while(bytes_read <= 0);
 
-    return usb_buf[1] == QMK_OPENRGB_SUCCESS ? true : false;
+    std::vector<unsigned int> enabled_modes;
+    int i = 1;
+    while (usb_buf[i] != 0)
+    {
+        enabled_modes.push_back(usb_buf[i]);
+        i++;
+    }
+    return enabled_modes;
 }
 
 void QMKOpenRGBController::SetMode(hsv_t hsv_color, unsigned char mode, unsigned char speed)

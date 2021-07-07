@@ -26,7 +26,7 @@ enum CommandsId
     QMK_OPENRGB_GET_DEVICE_INFO,
     QMK_OPENRGB_GET_MODE_INFO,
     QMK_OPENRGB_GET_LED_INFO,
-    QMK_OPENRGB_GET_IS_MODE_ENABLED,
+    QMK_OPENRGB_GET_ENABLED_MODES,
 
     QMK_OPENRGB_SET_MODE,
     QMK_OPENRGB_DIRECT_MODE_SET_SINGLE_LED,
@@ -146,12 +146,12 @@ public:
     std::vector<std::string>    GetLEDNames();
     std::vector<RGBColor>       GetLEDColors();
 
-    unsigned int    GetProtocolVersion();
-    std::string     GetQMKVersion();
-    void            GetDeviceInfo();
-    void            GetModeInfo();
-    void            GetLEDInfo(unsigned int leds_count);
-    bool            GetIsModeEnabled(unsigned int mode);
+    unsigned int                GetProtocolVersion();
+    std::string                 GetQMKVersion();
+    void                        GetDeviceInfo();
+    void                        GetModeInfo();
+    void                        GetLEDInfo(unsigned int leds_count);
+    std::vector<unsigned int>   GetEnabledModes();
 
     void            SetMode(hsv_t hsv_color, unsigned char mode, unsigned char speed);
     void            DirectModeSetSingleLED(unsigned int led, unsigned char red, unsigned char green, unsigned char blue);
