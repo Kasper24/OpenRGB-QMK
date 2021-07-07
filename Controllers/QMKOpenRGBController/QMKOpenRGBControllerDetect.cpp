@@ -19,7 +19,7 @@
 /*-----------------------------------------------------*\
 | Protocol version                                      |
 \*-----------------------------------------------------*/
-#define QMK_OPENRGB_PROTOCOL_VERSION            0xA
+#define QMK_OPENRGB_PROTOCOL_VERSION            0xB
 
 /*-----------------------------------------------------*\
 | Usage and Usage Page                                  |
